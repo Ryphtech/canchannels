@@ -21,6 +21,25 @@ const Header = () => {
 
   // Format time as HH:MM:SS AM/PM
   const formattedTime = currentDateTime.toLocaleTimeString();
+
+  const [theme, setTheme] = useState('light')
+  
+    // Check for saved theme preference or default to light mode
+    useEffect(() => {
+      const savedTheme = localStorage.getItem('theme') || 'light'
+      setTheme(savedTheme)
+      // Apply theme to document element
+      document.documentElement.setAttribute('data-theme', savedTheme)
+    }, [])
+
+  // Toggle theme function
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(newTheme)
+    // Apply theme to document element
+    document.documentElement.setAttribute('data-theme', newTheme)
+    localStorage.setItem('theme', newTheme)
+  }
   return (
     <div>
       <div className="navbar bg-base-100 shadow-sm md:px-20 lg:px-50">
@@ -62,7 +81,10 @@ const Header = () => {
             </ul>
           </div>
           <div>
-          <img src={logo_small} className="w-35 md:w-45 rounded bg-transparent dark:bg-white " alt="logo" />
+          <div className="ml-4 text-center text-sm leading-tight">
+          <img src={logo_small} className="w-35 md:w-40 rounded bg-transparent" alt="logo" />
+            <div><small>{formattedDate} | {formattedTime}</small></div>
+          </div>
           {/* <a className="btn btn-ghost text-xl">Can Channels</a> */}
           </div>
         </div>
@@ -84,10 +106,21 @@ const Header = () => {
         </div>
         <div className="navbar-end">
           <a className="btn btn-ghost">Advertise</a>
-          <div className="ml-4 text-center text-sm leading-tight">
-            <div>{formattedDate}</div>
-            <div>{formattedTime}</div>
-          </div>
+          <button
+          onClick={toggleTheme}
+          className="btn btn-circle bg-gray-300"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? (
+            <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+            </svg>
+          )}
+        </button>
         </div>
       </div>
 
