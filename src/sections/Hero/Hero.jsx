@@ -1,4 +1,5 @@
 import React from 'react'
+import AdBanner from '../../components/Adbanner/Adbanner'
 
 const Hero = () => {
   
@@ -115,6 +116,7 @@ const Hero = () => {
               </div>
             ))}
           </div>
+          <AdBanner image = 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg' link="https://example.com"/>
         </div>
       </div>
     </div>
