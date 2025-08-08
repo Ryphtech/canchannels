@@ -8,7 +8,7 @@ const AdBanner = ({ image, link }) => {
         <img
           src={image}
           alt="Advertisement"
-          className="w-full h-auto rounded-lg shadow-md transform transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-auto rounded-lg shadow-md"
         />
       </a>
 

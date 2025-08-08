@@ -23,7 +23,7 @@ const Navlinks = () => {
         <div className="collapse collapse-arrow bg-base-200">
           <input type="checkbox" />
           <div className="collapse-title text-md font-semibold">
-            Show Content
+            Show Categories
           </div>
           <div className="collapse-content">
             <ul className="flex flex-col gap-2">
