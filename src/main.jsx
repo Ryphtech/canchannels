@@ -11,6 +11,10 @@ import Userroot from './root/Userroot/Userroot';
 import Homepage from './pages/Homepage/Homepage';
 import Adminroot from './root/Adminroot/Adminroot';
 
+// Apply theme on app start
+const savedTheme = localStorage.getItem('theme') || 'light'
+document.documentElement.setAttribute('data-theme', savedTheme)
+
 const router = createBrowserRouter([
   {
     path: "/",
