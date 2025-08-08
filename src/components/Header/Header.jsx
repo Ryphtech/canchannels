@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import logo_small from '../../assets/can-channels-logo-small.png'
 import Navlinks from "../NavLinks/Navlinks";
 
 const Header = () => {
@@ -60,7 +61,10 @@ const Header = () => {
               </li>
             </ul>
           </div>
-          <a className="btn btn-ghost text-xl">Can Channels</a>
+          <div>
+          <img src={logo_small} className="w-35 md:w-45 rounded bg-transparent dark:bg-white " alt="logo" />
+          {/* <a className="btn btn-ghost text-xl">Can Channels</a> */}
+          </div>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
