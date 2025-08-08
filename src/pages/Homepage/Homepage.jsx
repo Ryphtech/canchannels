@@ -2,6 +2,7 @@ import React from 'react'
 import Hero from '../../sections/Hero/Hero'
 import AdBanner from '../../components/Adbanner/Adbanner'
 import CanPosts from '../../sections/CanPosts/CanPosts';
+import Showcase from '../Showcase/Showcase';
 
 const Homepage = () => {
   const dummyNewsList = [
@@ -70,6 +71,16 @@ const Homepage = () => {
     category: 'Can Politics'
   }
 ];
+  const dummyVideos = [
+  {
+    title: 'Official Trailer: The Return',
+    url: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+  },
+  {
+    title: 'Teaser: Galactic Wars 2',
+    url: 'https://www.youtube.com/embed/tgbNymZ7vqY'
+  }
+];
 
 
   return (
@@ -77,6 +88,7 @@ const Homepage = () => {
         <AdBanner image = 'https://cdn.shopify.com/s/files/1/0397/9113/2717/files/banner_website.jpg?v=1751957812&width=2048' link="https://example.com"/>
         <Hero/>
         <CanPosts newsList={dummyNewsList}/>
+        <Showcase youtubeVideos={dummyVideos} newsList={dummyNewsList} />;
     </div>
   )
 }
