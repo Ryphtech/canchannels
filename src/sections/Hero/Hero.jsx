@@ -20,42 +20,49 @@ const Hero = () => {
     localStorage.setItem('theme', newTheme)
   }
 
-  const newsArticles = [
+  const secondaryArticles = [
     {
       id: 1,
       title: "Tech Giants Announce Record-Breaking Quarterly Earnings",
-      date: "August 14, 2024",
-      image: "https://via.placeholder.com/60x60/e5e7eb/6b7280?text=📊"
+      subtitle: "Major technology companies report unprecedented growth in Q3"
     },
     {
       id: 2,
       title: "New Scientific Discovery Promises Breakthrough in Medicine",
-      date: "August 13, 2024",
-      image: "https://via.placeholder.com/60x60/e5e7eb/6b7280?text=🔬"
+      subtitle: "Researchers uncover potential treatment for chronic diseases"
     },
     {
       id: 3,
       title: "Travel Restrictions Lifted: Popular Destinations Reopen",
-      date: "August 11, 2024",
-      image: "https://via.placeholder.com/60x60/e5e7eb/6b7280?text=✈️"
+      subtitle: "Tourism industry sees surge as borders reopen worldwide"
+    }
+  ]
+
+  const newsArticles = [
+    {
+      id: 1,
+      title: "Tech Giants Announce Record-Breaking Quarterly Earnings",
+      date: "August 14, 2024"
+    },
+    {
+      id: 2,
+      title: "New Scientific Discovery Promises Breakthrough in Medicine",
+      date: "August 13, 2024"
+    },
+    {
+      id: 3,
+      title: "Travel Restrictions Lifted: Popular Destinations Reopen",
+      date: "August 11, 2024"
     },
     {
       id: 4,
       title: "Music Festival Sells Out in Record Time: Lineup Revealed",
-      date: "August 9, 2024",
-      image: "https://via.placeholder.com/60x60/e5e7eb/6b7280?text=🎵"
+      date: "August 9, 2024"
     },
     {
       id: 5,
       title: "Educational Reforms Aim to Improve Student Outcomes",
-      date: "August 7, 2024",
-      image: "https://via.placeholder.com/60x60/e5e7eb/6b7280?text=📚"
-    },
-    {
-      id: 6,
-      title: "Top Restaurants Awarded Michelin Stars for Culinary Excellence",
-      date: "August 6, 2024",
-      image: "https://via.placeholder.com/60x60/e5e7eb/6b7280?text=🍽️"
+      date: "August 7, 2024"
     }
   ]
 
@@ -80,89 +87,68 @@ const Hero = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Main Content Column */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Top Advertisement */}
-          <div className="bg-neutral text-neutral-content text-center py-4 rounded-lg">
-            <span className="font-semibold">ADVERTISEMENT</span>
-          </div>
-
-          {/* Main Image Placeholder */}
-          <div className="bg-base-200 rounded-lg h-96 flex items-center justify-center">
-            <div className="text-base-content/50 text-6xl">🏔️</div>
-          </div>
-
-          {/* Today's Highlights Section */}
+        <div className="lg:col-span-3 space-y-8">
+          {/* Today's Highlight Section */}
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold text-base-content">Today's Highlights</h1>
+            <h1 className="text-2xl font-bold text-base-content">Today's Highlight</h1>
             
-            {/* Category Tag */}
-            <div className="badge badge-primary text-primary-content px-4 py-2 text-sm font-medium">
-              BUSINESS
+            {/* Primary Highlight Area */}
+            <div className="bg-base-200 rounded-lg h-96 flex items-center justify-center">
+              <div className="text-base-content/50 text-6xl">🏔️</div>
             </div>
 
-            {/* Article Title */}
-            <h2 className="text-2xl font-bold text-base-content leading-tight">
-              Mastering Digital Marketing for Small Businesses: A Comprehensive Guide
-            </h2>
+            {/* Primary Content Details */}
+            <div className="space-y-2">
+              <div className="h-4 bg-base-300 rounded w-3/4"></div>
+              <div className="h-4 bg-base-300 rounded w-1/2"></div>
+              <div className="h-4 bg-base-300 rounded w-2/3"></div>
+            </div>
+          </div>
 
-            {/* Article Description */}
-            <p className="text-base-content/70 leading-relaxed">
-              Uncover the essential strategies and tools to effectively market your small business online. 
-              From SEO to social media, learn how to build a strong digital presence and drive growth in 
-              today's competitive landscape.
-            </p>
-
-            {/* Metadata and Read More */}
-            <div className="flex justify-between items-center pt-4">
-              <div className="text-sm text-base-content/60">
-                <span>August 15, 2024</span>
-                <span className="mx-2">•</span>
-                <span>10 min read</span>
-              </div>
-              <a href="#" className="link link-primary font-medium">
-                Read More
-              </a>
+          {/* Secondary Content/Article Previews */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {secondaryArticles.map((article) => (
+                <div key={article.id} className="space-y-3">
+                  {/* Article Thumbnail */}
+                  <div className="bg-base-200 rounded-lg h-48 flex items-center justify-center">
+                    <div className="text-base-content/50 text-4xl">📰</div>
+                  </div>
+                  
+                  {/* Article Details */}
+                  <div className="space-y-2">
+                    <div className="h-3 bg-base-300 rounded w-full"></div>
+                    <div className="h-3 bg-base-300 rounded w-3/4"></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* News Today Heading */}
+          {/* Today's News Heading */}
           <div className="border-b border-base-300 pb-2">
-            <h3 className="text-xl font-bold text-base-content uppercase tracking-wide">
-              News Today
+            <h3 className="text-xl font-bold text-base-content">
+              Today's News
             </h3>
           </div>
 
-          {/* News Articles List */}
+          {/* News List Area */}
           <div className="space-y-4">
             {newsArticles.map((article) => (
-              <div key={article.id} className="flex space-x-3">
-                <div className="flex-shrink-0">
-                  <img 
-                    src={article.image} 
-                    alt={article.title}
-                    className="w-16 h-16 rounded object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium text-base-content leading-tight hover:text-primary cursor-pointer transition-colors duration-200">
-                    {article.title}
-                  </h4>
-                  <p className="text-xs text-base-content/60 mt-1">
-                    {article.date}
-                  </p>
-                </div>
+              <div key={article.id} className="p-4 bg-base-200 rounded-lg">
+                <h4 className="text-sm font-medium text-base-content leading-tight hover:text-primary cursor-pointer transition-colors duration-200">
+                  {article.title}
+                </h4>
+                <p className="text-xs text-base-content/60 mt-1">
+                  {article.date}
+                </p>
               </div>
             ))}
-          </div>
-
-          {/* Bottom Advertisement */}
-          <div className="bg-neutral text-neutral-content text-center py-4 rounded-lg mt-8">
-            <span className="font-semibold">ADVERTISEMENT</span>
           </div>
         </div>
       </div>
