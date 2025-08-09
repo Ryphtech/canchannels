@@ -1,10 +1,10 @@
 import React from 'react';
-import CanNewsCard from '../../components/CanPostCard/CanPostCard'; // Adjust path if needed
+import CanPostCard from '../../components/CanPostCard/CanPostCard'; // Adjust path if needed
 
 const Showcase = ({ youtubeVideos, newsList }) => {
   // Filter cinema-related news
   const cinemaNews = newsList.filter(news =>
-    ['Cinema', 'Trailer', 'Teaser'].includes(news.category)
+    ['Can Exclusive'].includes(news.category)
   );
 
   return (
@@ -37,19 +37,22 @@ const Showcase = ({ youtubeVideos, newsList }) => {
           </div>
 
           {/* Right Column - Cinema News Cards */}
-          <div className="grid gap-6 grid-cols-2">
-            {cinemaNews.map((news, index) => (
-              <CanNewsCard
-                key={index}
-                image={news.image}
-                title={news.title}
-                description={news.description}
-                link={news.link}
-                publishedOn={news.publishedOn}
-                category={news.category}
-              />
-            ))}
-          </div>
+          <div className="h-[600px] overflow-y-auto pr-2 scrollbar-hide">
+  <div className="grid gap-6 grid-cols-2">
+    {cinemaNews.map((news, index) => (
+      <CanPostCard
+        key={index}
+        image={news.image}
+        title={news.title}
+        description={news.description}
+        link={news.link}
+        publishedOn={news.publishedOn}
+        category={news.category}
+      />
+    ))}
+  </div>
+</div>
+
         </div>
       </div>
     </section>

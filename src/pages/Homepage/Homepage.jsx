@@ -69,6 +69,46 @@ const Homepage = () => {
     link: 'https://example.com/news/politics-bill',
     publishedOn: '2025-08-06',
     category: 'Can Politics'
+  },
+  {
+    image: 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
+    title: 'Behind the Scenes of a Blockbuster: Can Exclusive Insight',
+    description: 'Take a rare look behind the camera of the year’s biggest film production.',
+    link: 'https://example.com/news/behind-the-scenes',
+    publishedOn: '2025-08-01',
+    category: 'Can Exclusive'
+  },
+  {
+    image: 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
+    title: 'Can Exclusive: Director Shares Creative Process',
+    description: 'In an in-depth interview, the director opens up about vision, challenges, and storytelling.',
+    link: 'https://example.com/news/director-interview',
+    publishedOn: '2025-07-30',
+    category: 'Can Exclusive'
+  },
+  {
+    image: 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
+    title: 'Exclusive Set Tour of a Fantasy Epic',
+    description: 'Explore the incredible set of the new fantasy series before its global premiere.',
+    link: 'https://example.com/news/set-tour',
+    publishedOn: '2025-07-28',
+    category: 'Can Exclusive'
+  },
+  {
+    image: 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
+    title: 'Revealed: Star’s Secret Role in Upcoming Series',
+    description: 'A-list actor makes a surprise appearance in this much-awaited web series.',
+    link: 'https://example.com/news/secret-role',
+    publishedOn: '2025-07-26',
+    category: 'Can Exclusive'
+  },
+  {
+    image: 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
+    title: 'Can Exclusive: Fashion Transformation of Celebs',
+    description: 'How top celebrities reinvented their style for upcoming roles.',
+    link: 'https://example.com/news/fashion-transformation',
+    publishedOn: '2025-07-24',
+    category: 'Can Exclusive'
   }
 ];
   const dummyVideos = [
