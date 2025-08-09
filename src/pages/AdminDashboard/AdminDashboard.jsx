@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import PostCard from '../../components/PostCard/PostCard'
 import AddPostModal from '../../components/AddPostModal/AddPostModal'
+import EditPostModal from '../../components/EditPostModal/EditPostModal'
 
 const AdminDashboard = () => {
   const [theme, setTheme] = useState('light')
   const [posts, setPosts] = useState([])
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingPost, setEditingPost] = useState(null)
 
   // Check for saved theme preference or default to light mode
   useEffect(() => {
@@ -88,10 +91,11 @@ const AdminDashboard = () => {
 
   // Handle post editing
   const handleEditPost = (postId) => {
-    // This would typically open an edit modal or navigate to an edit page
-    console.log('Edit post:', postId)
-    // For now, we'll just show an alert
-    alert('Edit functionality would open here for post ID: ' + postId)
+    const postToEdit = posts.find(post => post.id === postId)
+    if (postToEdit) {
+      setEditingPost(postToEdit)
+      setShowEditModal(true)
+    }
   }
 
   // Handle adding new post
@@ -111,6 +115,33 @@ const AdminDashboard = () => {
     }
     setPosts([post, ...posts])
     setShowAddModal(false)
+  }
+
+  // Handle updating existing post
+  const handleUpdatePost = (postId, updatedPost) => {
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          ...updatedPost,
+          // Handle image update - if new image uploaded, create URL, otherwise keep existing
+          image: updatedPost.image && updatedPost.image !== post.image 
+            ? (typeof updatedPost.image === 'string' ? updatedPost.image : URL.createObjectURL(updatedPost.image))
+            : post.image,
+          // Update links
+          links: updatedPost.links || []
+        }
+      }
+      return post
+    }))
+    setShowEditModal(false)
+    setEditingPost(null)
+  }
+
+  // Handle closing edit modal
+  const handleCloseEditModal = () => {
+    setShowEditModal(false)
+    setEditingPost(null)
   }
 
   const featuredPost = posts.find(post => post.featured)
@@ -237,6 +268,15 @@ const AdminDashboard = () => {
         <AddPostModal
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddPost}
+        />
+      )}
+
+      {/* Edit Post Modal */}
+      {showEditModal && editingPost && (
+        <EditPostModal
+          post={editingPost}
+          onClose={handleCloseEditModal}
+          onSubmit={handleUpdatePost}
         />
       )}
     </div>
