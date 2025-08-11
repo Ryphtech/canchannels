@@ -6,15 +6,9 @@ const Navlinks = () => {
       {/* For large screens */}
       <div className="hidden md:flex justify-center items-center p-4 overflow-x-auto">
         <ul className="flex gap-4 flex-wrap justify-between">
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">Cinema</a></li>
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">Can Politics</a></li>
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">Can Exclusive</a></li>
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">Popular News</a></li>
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">Cele Videos</a></li>
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">Popular Videos</a></li>
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">Astro</a></li>
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">New Showcases</a></li>
-          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap">Trailer/Teaser/Songs</a></li>
+          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap border p-1 rounded">Cinema</a></li>
+          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap border p-1 rounded">Can News</a></li>
+          <li><a href="#" className="text-sm font-medium hover:underline whitespace-nowrap border p-1 rounded">Can Exclusive</a></li>
         </ul>
       </div>
 
@@ -28,14 +22,8 @@ const Navlinks = () => {
           <div className="collapse-content">
             <ul className="flex flex-col gap-2">
               <li><a href="#" className="text-sm font-medium hover:underline">Cinema</a></li>
-              <li><a href="#" className="text-sm font-medium hover:underline">Can Politics</a></li>
+              <li><a href="#" className="text-sm font-medium hover:underline">Can News</a></li>
               <li><a href="#" className="text-sm font-medium hover:underline">Can Exclusive</a></li>
-              <li><a href="#" className="text-sm font-medium hover:underline">Popular News</a></li>
-              <li><a href="#" className="text-sm font-medium hover:underline">Cele Videos</a></li>
-              <li><a href="#" className="text-sm font-medium hover:underline">Popular Videos</a></li>
-              <li><a href="#" className="text-sm font-medium hover:underline">Astro</a></li>
-              <li><a href="#" className="text-sm font-medium hover:underline">New Showcases</a></li>
-              <li><a href="#" className="text-sm font-medium hover:underline">Trailer/Teaser/Songs</a></li>
             </ul>
           </div>
         </div>

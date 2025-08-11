@@ -11,6 +11,7 @@ import Userroot from './root/Userroot/Userroot';
 import Homepage from './pages/Homepage/Homepage';
 import Adminroot from './root/Adminroot/Adminroot';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
+import Content from './pages/ContentDisplayPage/Content';
 
 // Apply theme on app start
 const savedTheme = localStorage.getItem('theme') || 'light'
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
         path: '/',
         element: <Homepage/>
       },
+      {
+        path: "content",
+        element: <Content/>
+      }
     ]
   },
   {

@@ -148,10 +148,7 @@ const Header = () => {
 </div>
 
       </div>
-
-
-      
-      <Navlinks />
+      <Navlinks/>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 import CookieBanner from '../../components/CookieBanner/CookieBanner'
 import NotificationBell from '../../components/NotificationBanner/NotificationBell'
+import AdBanner from '../../components/Adbanner/Adbanner'
 
 
 const Userroot = () => {
