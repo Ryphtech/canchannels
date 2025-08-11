@@ -56,13 +56,41 @@ const Content = () => {
 
       {/* Right Section */}
       <div className="w-full md:w-1/4 space-y-4">
-        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
-          <h3 className="font-semibold text-lg mb-2">Right Panel</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            You can place ads, social links, trending posts, or suggestions here.
-          </p>
+  {/* Watch Now */}
+  <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+    <h3 className="font-semibold text-lg mb-2">Watch Now</h3>
+    <div className="aspect-w-16 aspect-h-9">
+      <iframe
+        src={`https://www.youtube.com/embed/${contentData[0].youtubeLink.split("v=")[1]}`}
+        title="YouTube Video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-48 rounded"
+      />
+    </div>
+  </div>
+
+  {/* Recommendations */}
+  <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+    <h3 className="font-semibold text-lg mb-4">Recommendations</h3>
+    <div className="space-y-4">
+      {contentData.slice(1, 4).map((item, index) => (
+        <div key={index} className="flex gap-3">
+          <img
+            src={item.image}
+            alt={item.title}
+            className="w-16 h-16 object-cover rounded"
+          />
+          <div className="flex flex-col">
+            <p className="text-sm font-semibold line-clamp-2">{item.title}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{item.description.slice(0, 60)}...</p>
+          </div>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+
     </div>
   );
 };
