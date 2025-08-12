@@ -99,11 +99,11 @@ const NotificationBell = () => {
       )}
 
       {/* Loading/Refresh Icon */}
-      <div className="fixed bottom-4 sm:bottom-6 left-4 sm:left-6 z-30">
+      {/* <div className="fixed bottom-4 sm:bottom-6 left-4 sm:left-6 z-30">
         <div className="bg-can-blue text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-lg">
           <div className="animate-spin rounded-full h-4 w-4 sm:h-6 sm:w-6 border-b-2 border-white"></div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import logo_small from '../../assets/can-channels-logo-small.png'
+import logo_small from '../../../assets/can-channels-logo-small.png'
+
+
 
 const AdminHeader = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());

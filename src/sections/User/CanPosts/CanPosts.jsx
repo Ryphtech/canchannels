@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import CanPostCard from "../../components/CanPostCard/CanPostCard";
-import Navlinks from "../../components/NavLinks/Navlinks";
-import AdBanner from "../../components/Adbanner/Adbanner";
-import AdvertiseSection from "../../components/AdvertiseSection/AdvertiseSection";
+import CanPostCard from "../../../components/User/CanPostCard/CanPostCard";
+import Navlinks from "../../../components/User/NavLinks/Navlinks";
+import AdBanner from "../../../components/User/Adbanner/Adbanner";
+import AdvertiseSection from "../../../components/User/AdvertiseSection/AdvertiseSection";
 import Socialmedia from "../SocialMedia/Socialmedia";
 
 const CanPosts = ({ newsList }) => {
