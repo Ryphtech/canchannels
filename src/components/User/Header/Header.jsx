@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import logo_small from '../../../assets/can-channels-logo-small.png'
 import Navlinks from "../NavLinks/Navlinks";
+import { postsService } from '../../../backend/postsService';
 
 const Header = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -40,8 +45,69 @@ const Header = () => {
     document.documentElement.setAttribute('data-theme', newTheme)
     localStorage.setItem('theme', newTheme)
   }
+
+  // Toggle search bar
+  const toggleSearch = () => {
+    setShowSearch(!showSearch);
+    if (showSearch) {
+      setSearchQuery('');
+      setSearchResults([]);
+    }
+  };
+
+  // Handle search
+  const handleSearch = async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const results = await postsService.searchPosts(query);
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Handle search input change with debouncing
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery.trim()) {
+        handleSearch(searchQuery);
+      } else {
+        setSearchResults([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showSearch && !event.target.closest('.search-container')) {
+        setShowSearch(false);
+        setSearchQuery('');
+        setSearchResults([]);
+      }
+    };
+
+    if (showSearch) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSearch]);
+
   return (
-    <div>
+    <div className="search-container">
       <div className="navbar bg-base-100 shadow-sm md:px-20 lg:px-30">
         <div className="navbar-start">
           <div className="dropdown">
@@ -109,7 +175,11 @@ const Header = () => {
   <a className="btn btn-ghost">Advertise</a>
 
   {/* Search Icon Button */}
-  <button className="btn btn-ghost btn-circle" aria-label="Search">
+  <button 
+    onClick={toggleSearch}
+    className={`btn btn-ghost btn-circle ${showSearch ? 'bg-primary text-primary-content' : ''}`} 
+    aria-label="Search"
+  >
     <svg
       className="w-6 h-6"
       fill="none"
@@ -148,6 +218,99 @@ const Header = () => {
 </div>
 
       </div>
+
+      {/* Search Bar Section */}
+      {showSearch && (
+        <div className="bg-base-200 border-t border-base-300 shadow-lg">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="relative">
+              <div className="flex items-center gap-4">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    placeholder="Search posts..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="input input-bordered w-full pl-10 pr-4"
+                    autoFocus
+                  />
+                  <svg
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-base-content/50"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
+                <button
+                  onClick={toggleSearch}
+                  className="btn btn-ghost btn-sm"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Search Results */}
+              {(searchQuery.trim() || isSearching) && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-base-100 border border-base-300 rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
+                  {isSearching ? (
+                    <div className="p-4 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        <span className="text-sm text-base-content/70">Searching...</span>
+                      </div>
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <div className="py-2">
+                      {searchResults.map((post) => (
+                        <div
+                          key={post.id}
+                          className="px-4 py-3 hover:bg-base-200 cursor-pointer border-b border-base-200 last:border-b-0"
+                        >
+                          <div className="flex items-start gap-3">
+                            <img
+                              src={post.image}
+                              alt={post.title}
+                              className="w-12 h-12 object-cover rounded"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-base-content line-clamp-1">
+                                {post.title}
+                              </h4>
+                              <p className="text-sm text-base-content/70 line-clamp-1">
+                                {post.description}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs bg-primary/20 px-2 py-1 rounded">
+                                  {post.category}
+                                </span>
+                                <span className="text-xs text-base-content/50">
+                                  {post.publishedOn}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : searchQuery.trim() ? (
+                    <div className="p-4 text-center text-base-content/70">
+                      No posts found for "{searchQuery}"
+                    </div>
+                  ) : null}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <Navlinks/>
     </div>
   );
