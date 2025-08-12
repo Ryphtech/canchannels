@@ -113,7 +113,7 @@ const EditPostModal = ({ post, onClose, onSubmit }) => {
     // Basic URL validation
     try {
       new URL(currentLink.url)
-    } catch (error) {
+    } catch (err) {
       alert('Please enter a valid URL (e.g., https://example.com)')
       return
     }
