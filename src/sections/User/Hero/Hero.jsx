@@ -1,5 +1,5 @@
 import React from 'react'
-import AdBanner from '../../components/Adbanner/Adbanner'
+import AdBanner from '../../../components/User/Adbanner/Adbanner'
 
 const Hero = () => {
   

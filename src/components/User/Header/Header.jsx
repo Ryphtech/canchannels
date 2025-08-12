@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import logo_small from '../../assets/can-channels-logo-small.png'
+import logo_small from '../../../assets/can-channels-logo-small.png'
 import Navlinks from "../NavLinks/Navlinks";
 
 const Header = () => {

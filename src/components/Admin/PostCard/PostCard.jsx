@@ -64,7 +64,7 @@ const PostCard = ({ post, onEdit, onDelete, isFeatured = false }) => {
           )}
           
           {/* Display attached links */}
-          {post.links && post.links.length > 0 && (
+          {Array.isArray(post.links) && post.links.length > 0 && (
             <div className="mt-4 space-y-2">
               <div className="text-sm font-medium text-base-content/70">
                 Related Links:
@@ -150,7 +150,7 @@ const PostCard = ({ post, onEdit, onDelete, isFeatured = false }) => {
         )}
         
         {/* Display attached links for regular posts */}
-        {post.links && post.links.length > 0 && (
+        {Array.isArray(post.links) && post.links.length > 0 && (
           <div className="mt-2 space-y-1">
             <div className="text-xs font-medium text-base-content/60">
               Links ({post.links.length}):

@@ -1,5 +1,5 @@
 import React from 'react';
-import CanPostCard from '../../components/CanPostCard/CanPostCard'; // Adjust path if needed
+import CanPostCard from '../../../components/User/CanPostCard/CanPostCard'; // Adjust path if needed
 
 const Showcase = ({ youtubeVideos, newsList }) => {
   // Filter cinema-related news

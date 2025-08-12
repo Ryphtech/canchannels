@@ -1,9 +1,9 @@
 import React from 'react'
-import Hero from '../../sections/Hero/Hero'
-import AdBanner from '../../components/Adbanner/Adbanner'
-import CanPosts from '../../sections/CanPosts/CanPosts';
-import Showcase from '../../sections/Showcase/Showcase';
-import Navlinks from '../../components/NavLinks/Navlinks';
+import Hero from '../../../sections/User/Hero/Hero'
+import AdBanner from '../../../components/User/Adbanner/Adbanner'
+import CanPosts from '../../../sections/User/CanPosts/CanPosts';
+import Showcase from '../../../sections/User/Showcase/Showcase';
+import Navlinks from '../../../components/User/NavLinks/Navlinks';
 
 const Homepage = () => {
   const dummyNewsList = [
