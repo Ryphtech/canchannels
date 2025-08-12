@@ -1,19 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CanPostCard from "../../../components/User/CanPostCard/CanPostCard";
 import Navlinks from "../../../components/User/NavLinks/Navlinks";
 import AdBanner from "../../../components/User/Adbanner/Adbanner";
 import AdvertiseSection from "../../../components/User/AdvertiseSection/AdvertiseSection";
 import Socialmedia from "../SocialMedia/Socialmedia";
+import { postsService } from "../../../backend/postsService";
 
-const CanPosts = ({ newsList }) => {
+const CanPosts = () => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [error, setError] = useState(null);
 
-  const filteredNews = newsList.filter(
-    (news) =>
-      news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      news.description.toLowerCase().includes(searchQuery.toLowerCase())
+  // Fetch posts from Supabase
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const fetchedPosts = await postsService.fetchPosts();
+      setPosts(fetchedPosts);
+    } catch (err) {
+      console.error('Error fetching posts:', err);
+      setError('Failed to load posts. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Search posts
+  const handleSearch = async (query) => {
+    if (!query.trim()) {
+      await fetchPosts();
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const searchResults = await postsService.searchPosts(query);
+      setPosts(searchResults);
+    } catch (err) {
+      console.error('Error searching posts:', err);
+      setError('Failed to search posts. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter posts locally based on search query
+  const filteredPosts = posts.filter(
+    (post) =>
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  // Handle search input change with debouncing
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery.trim()) {
+        handleSearch(searchQuery);
+      } else {
+        fetchPosts();
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   return (
     <section className="py-8 px-4">
@@ -23,7 +80,6 @@ const CanPosts = ({ newsList }) => {
         </div>
 
         <div className="md:flex h-auto md:h-screen gap-4  order-2 md:order-1">
-          {/* Right Column (wider on medium+) */}
           {/* Right Column (wider on medium+) */}
           <div className="w-full md:w-3/4 p-4 order-1 md:order-2">
             {/* Search bar with filter icon */}
@@ -66,29 +122,62 @@ const CanPosts = ({ newsList }) => {
               </div>
             )}
 
-            {/* Scrollable News Cards */}
-            <div className="max-h-[70vh] overflow-y-auto scrollbar-hide pr-2">
-              <div className="grid gap-6 grid-cols-2 md:grid-cols-3">
-                {filteredNews.length > 0 ? (
-                  filteredNews.map((news, index) => (
-                    <CanPostCard
-                      key={index}
-                      image={news.image}
-                      title={news.title}
-                      description={news.description}
-                      link={news.link}
-                      publishedOn={news.publishedOn}
-                      category={news.category}
-                    />
-                  ))
-                ) : (
-                  <p className="col-span-full text-center">
-                    No news found for "
-                    <span className="font-medium">{searchQuery}</span>"
-                  </p>
-                )}
+            {/* Loading state */}
+            {loading && (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="text-gray-600">Loading posts...</span>
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Error state */}
+            {error && !loading && (
+              <div className="text-center py-12">
+                <div className="text-red-500 text-6xl mb-4">⚠️</div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Posts</h3>
+                <p className="text-gray-600 mb-6">{error}</p>
+                <button
+                  onClick={fetchPosts}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+
+            {/* Scrollable News Cards */}
+            {!loading && !error && (
+              <div className="max-h-[70vh] overflow-y-auto scrollbar-hide pr-2">
+                <div className="grid gap-6 grid-cols-2 md:grid-cols-3">
+                  {filteredPosts.length > 0 ? (
+                    filteredPosts.map((post, index) => (
+                      <CanPostCard
+                        key={post.id || index}
+                        image={post.image}
+                        title={post.title}
+                        description={post.description}
+                        link={post.link}
+                        publishedOn={post.publishedOn}
+                        category={post.category}
+                      />
+                    ))
+                  ) : (
+                    <p className="col-span-full text-center">
+                      {searchQuery ? (
+                        <>
+                          No posts found for "
+                          <span className="font-medium">{searchQuery}</span>"
+                        </>
+                      ) : (
+                        "No posts available at the moment."
+                      )}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
             <Socialmedia/>
           </div>
           {/* Left Column (narrower on medium+) */}

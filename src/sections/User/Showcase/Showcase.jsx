@@ -1,10 +1,46 @@
-import React from 'react';
-import CanPostCard from '../../../components/User/CanPostCard/CanPostCard'; // Adjust path if needed
+import React, { useState, useEffect } from 'react';
+import CanPostCard from '../../../components/User/CanPostCard/CanPostCard';
+import { postsService } from '../../../backend/postsService';
 
-const Showcase = ({ youtubeVideos, newsList }) => {
-  // Filter cinema-related news
-  const cinemaNews = newsList.filter(news =>
-    ['Can Exclusive'].includes(news.category)
+const Showcase = () => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Mock videos data (keeping this as requested - only ads sections should have mock data)
+  const youtubeVideos = [
+    {
+      title: 'Official Trailer: The Return',
+      url: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    {
+      title: 'Teaser: Galactic Wars 2',
+      url: 'https://www.youtube.com/embed/tgbNymZ7vqY'
+    }
+  ];
+
+  // Fetch posts from Supabase
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const fetchedPosts = await postsService.fetchPosts();
+      setPosts(fetchedPosts);
+    } catch (err) {
+      console.error('Error fetching posts:', err);
+      setError('Failed to load posts. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  // Filter cinema-related posts (Can Exclusive category)
+  const cinemaPosts = posts.filter(post =>
+    ['Can Exclusive'].includes(post.category)
   );
 
   return (
@@ -38,20 +74,47 @@ const Showcase = ({ youtubeVideos, newsList }) => {
 
           {/* Right Column - Cinema News Cards */}
           <div className="h-[600px] overflow-y-auto pr-2 scrollbar-hide">
-  <div className="grid gap-6 grid-cols-2">
-    {cinemaNews.map((news, index) => (
-      <CanPostCard
-        key={index}
-        image={news.image}
-        title={news.title}
-        description={news.description}
-        link={news.link}
-        publishedOn={news.publishedOn}
-        category={news.category}
-      />
-    ))}
-  </div>
-</div>
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="text-gray-600">Loading posts...</span>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="text-red-500 text-6xl mb-4">⚠️</div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Posts</h3>
+                <p className="text-gray-600 mb-6">{error}</p>
+                <button
+                  onClick={fetchPosts}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : cinemaPosts.length > 0 ? (
+              <div className="grid gap-6 grid-cols-2">
+                {cinemaPosts.map((post, index) => (
+                  <CanPostCard
+                    key={post.id || index}
+                    image={post.image}
+                    title={post.title}
+                    description={post.description}
+                    link={post.link}
+                    publishedOn={post.publishedOn}
+                    category={post.category}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 text-6xl mb-4">🎬</div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">No Exclusive Content</h3>
+                <p className="text-gray-600">Check back later for exclusive content and releases.</p>
+              </div>
+            )}
+          </div>
 
         </div>
       </div>
