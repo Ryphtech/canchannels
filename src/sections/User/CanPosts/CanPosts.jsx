@@ -183,8 +183,9 @@ const CanPosts = () => {
           {/* Left Column (narrower on medium+) */}
           <div className="w-full md:w-1/4 p-4 mb-6 md:mb-0">
             <AdBanner
-              image="https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
-              link="https://example.com"
+              position="can-posts-sidebar"
+              fallbackImage="https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
+              fallbackLink="https://example.com"
             />
             <AdvertiseSection />
           </div>

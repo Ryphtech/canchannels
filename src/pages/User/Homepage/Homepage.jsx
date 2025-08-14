@@ -7,7 +7,7 @@ import Showcase from '../../../sections/User/Showcase/Showcase';
 const Homepage = () => {
   return (
     <div>
-        <AdBanner image = 'https://cdn.shopify.com/s/files/1/0397/9113/2717/files/banner_website.jpg?v=1751957812&width=2048' link="https://example.com"/>
+        <AdBanner position="homepage-top" fallbackImage="https://cdn.shopify.com/s/files/1/0397/9113/2717/files/banner_website.jpg?v=1751957812&width=2048" fallbackLink="https://example.com"/>
         <Hero/>
         <CanPosts/>
         <Showcase/>
