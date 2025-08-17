@@ -5,6 +5,8 @@ import AddPostModal from "../../../components/Admin/AddPostModal/AddPostModal";
 import EditPostModal from "../../../components/Admin/EditPostModal/EditPostModal";
 import AdminHeader from "../../../components/Admin/AdminHeader/AdminHeader";
 import AdvertisementManager from "../../../components/Admin/AdvertisementManager/AdvertisementManager";
+import SubAdminManager from "../../../components/Admin/SubAdminManager/SubAdminManager";
+import { useAdminAuth } from "../../../contexts/AdminAuthContext";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('posts');
@@ -15,11 +17,42 @@ export default function AdminDashboard() {
   const [editingPost, setEditingPost] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [userRole, setUserRole] = useState(null);
   const [stats, setStats] = useState({
     total: 0,
     featured: 0,
     recent: 0
   });
+  
+  const { admin } = useAdminAuth();
+
+  // Fetch user role when admin changes
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (admin?.id) {
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', admin.id)
+            .single();
+          
+          if (!error && profile?.role) {
+            setUserRole(profile.role);
+            
+            // If user is not admin and tries to access subadmins tab, redirect to posts
+            if (profile.role !== 'admin' && activeTab === 'subadmins') {
+              setActiveTab('posts');
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching user role:', error);
+        }
+      }
+    };
+
+    fetchUserRole();
+  }, [admin, activeTab]);
 
   // Test Supabase connection
   const testConnection = async () => {
@@ -356,7 +389,7 @@ export default function AdminDashboard() {
         {/* Tab Navigation */}
         <div className="tabs tabs-boxed bg-base-200 p-1 mb-6">
           <button
-            className={`tab flex-1 ${activeTab === 'posts' ? 'tab-active' : ''}`}
+            className={`tab ${activeTab === 'posts' ? 'tab-active' : ''}`}
             onClick={() => setActiveTab('posts')}
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -365,7 +398,7 @@ export default function AdminDashboard() {
             Posts Management
           </button>
           <button
-            className={`tab flex-1 ${activeTab === 'advertisements' ? 'tab-active' : ''}`}
+            className={`tab ${activeTab === 'advertisements' ? 'tab-active' : ''}`}
             onClick={() => setActiveTab('advertisements')}
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -373,6 +406,17 @@ export default function AdminDashboard() {
             </svg>
             Advertisement Management
           </button>
+          {userRole === 'admin' && (
+            <button
+              className={`tab ${activeTab === 'subadmins' ? 'tab-active' : ''}`}
+              onClick={() => setActiveTab('subadmins')}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Sub-Admin Management
+            </button>
+          )}
         </div>
 
         {/* Content based on active tab */}
@@ -545,6 +589,19 @@ export default function AdminDashboard() {
               )}
             </div>
           </>
+        ) : activeTab === 'subadmins' ? (
+          userRole === 'admin' ? (
+            <SubAdminManager />
+          ) : (
+            <div className="text-center py-8">
+              <div className="alert alert-error">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <span>Access Denied. Only administrators can access Sub-Admin Management.</span>
+              </div>
+            </div>
+          )
         ) : (
           <AdvertisementManager />
         )}
