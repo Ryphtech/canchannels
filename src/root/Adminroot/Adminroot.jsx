@@ -1,20 +1,22 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import AdminHeader from '../../components/AdminHeader/AdminHeader'
-import Footer from '../../components/Footer/Footer'
-import CookieBanner from '../../components/CookieBanner/CookieBanner'
-import NotificationBell from '../../components/NotificationBanner/NotificationBell'
+import Footer from '../../components/Global/Footer/Footer'
+import CookieBanner from '../../components/Global/CookieBanner/CookieBanner'
+import NotificationBell from '../../components/Global/NotificationBanner/NotificationBell'
+import { ThemeProvider } from '../../contexts/ThemeContext'
+import { AdminAuthProvider } from '../../contexts/AdminAuthContext'
 
 
 const Adminroot = () => {
   return (
-    <>
-      <AdminHeader/>
-      <Outlet/>
-      <Footer/>
-      <CookieBanner/>
-      <NotificationBell/>
-    </>
+    <ThemeProvider>
+      <AdminAuthProvider>
+        <Outlet/>
+        <Footer/>
+        <CookieBanner/>
+        <NotificationBell/>
+      </AdminAuthProvider>
+    </ThemeProvider>
   )
 }
 

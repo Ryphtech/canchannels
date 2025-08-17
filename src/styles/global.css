@@ -10,3 +10,54 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;             /* Chrome, Safari, and Opera */
 }
+
+/* Theme transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Ensure proper theme support for DaisyUI components */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .stat {
+    padding: 1rem !important;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem !important;
+  }
+  
+  .stat-title {
+    font-size: 0.875rem !important;
+  }
+}
+
+/* Mobile-friendly button improvements */
+@media (max-width: 640px) {
+  .btn {
+    min-height: 2.5rem;
+  }
+  
+  .btn-sm {
+    min-height: 2rem;
+  }
+  
+  .btn-xs {
+    min-height: 1.75rem;
+  }
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 640px) {
+  .btn, .input, .select, .textarea {
+    min-height: 2.5rem;
+  }
+}

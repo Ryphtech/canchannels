@@ -8,14 +8,15 @@ import {
 import './styles/global.css'
 
 import Userroot from './root/Userroot/Userroot';
-import Homepage from './pages/Homepage/Homepage';
+import Homepage from './pages/User/Homepage/Homepage';
 import Adminroot from './root/Adminroot/Adminroot';
-import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
-import Content from './pages/ContentDisplayPage/Content';
-
-// Apply theme on app start
-const savedTheme = localStorage.getItem('theme') || 'light'
-document.documentElement.setAttribute('data-theme', savedTheme)
+import AdminDashboard from './pages/Admin/AdminDashboard/AdminDashboard';
+import AdminLogin from './pages/Admin/AdminLogin/AdminLogin';
+import ProtectedRoute from './components/Admin/ProtectedRoute/ProtectedRoute';
+import Content from './pages/User/ContentDisplayPage/Content';
+import PrivacyPolicy from './pages/Global/PrivacyPolicy/PrivacyPolicy';
+import { CookieConsentProvider } from './contexts/CookieConsentContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,14 @@ const router = createBrowserRouter([
       {
         path: "content",
         element: <Content/>
+      },
+      {
+        path: "content/:postId",
+        element: <Content/>
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy/>
       }
     ]
   },
@@ -38,7 +47,11 @@ const router = createBrowserRouter([
     children:[
       {
         path: "/admin",
-        element: <AdminDashboard/>
+        element: <ProtectedRoute><AdminDashboard/></ProtectedRoute>
+      },
+      {
+        path: "/admin/login",
+        element: <AdminLogin/>
       }
     ]
   }
@@ -46,6 +59,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider>
+      <CookieConsentProvider>
+        <RouterProvider router={router} />
+      </CookieConsentProvider>
+    </ThemeProvider>
   </StrictMode>,
 )
