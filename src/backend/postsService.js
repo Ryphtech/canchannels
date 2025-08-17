@@ -1,5 +1,31 @@
 import { supabase } from './supabaseClient';
 
+// Helper function to format category display names
+const formatCategoryDisplay = (category) => {
+  // Handle null, undefined, or empty string
+  if (!category || category.trim() === '') {
+    return 'General';
+  }
+  
+  // Trim whitespace and convert to lowercase for consistent matching
+  const normalizedCategory = category.trim().toLowerCase();
+  
+  const categoryMap = {
+    'can-news': 'Can News',
+    'can-exclusive': 'Can Exclusive',
+    'cinema': 'Cinema',
+    'general': 'General'
+  };
+  
+  const formattedCategory = categoryMap[normalizedCategory];
+  
+  if (formattedCategory) {
+    return formattedCategory;
+  } else {
+    return category; // Return original if not found in map
+  }
+};
+
 export const postsService = {
   // Fetch all posts for user display
   async fetchPosts() {
@@ -15,15 +41,19 @@ export const postsService = {
       }
 
       // Transform the data to match the expected format for user components
-      return (data || []).map(post => ({
-        id: post.id,
-        image: post.image || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
-        title: post.title,
-        description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
-        link: post.links?.[0] || null,
-        publishedOn: new Date(post.created_at).toISOString().split('T')[0],
-        category: post.category || 'General'
-      }));
+      return (data || []).map(post => {
+        const formattedCategory = formatCategoryDisplay(post.category);
+        
+        return {
+          id: post.id,
+          image: post.image || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
+          title: post.title,
+          description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
+          link: post.links?.[0] || null,
+          publishedOn: new Date(post.created_at).toISOString().split('T')[0],
+          category: formattedCategory
+        };
+      });
     } catch (error) {
       console.error('Error in fetchPosts:', error);
       return [];
@@ -51,7 +81,7 @@ export const postsService = {
         description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
         link: post.links?.[0] || null,
         publishedOn: new Date(post.created_at).toISOString().split('T')[0],
-        category: post.category || 'General'
+        category: formatCategoryDisplay(post.category)
       }));
     } catch (error) {
       console.error('Error in fetchPostsByCategory:', error);
@@ -80,7 +110,7 @@ export const postsService = {
         description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
         link: post.links?.[0] || null,
         publishedOn: new Date(post.created_at).toISOString().split('T')[0],
-        category: post.category || 'General'
+        category: formatCategoryDisplay(post.category)
       }));
     } catch (error) {
       console.error('Error in fetchFeaturedPosts:', error);
@@ -109,7 +139,7 @@ export const postsService = {
         description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
         link: post.links?.[0] || null,
         publishedOn: new Date(post.created_at).toISOString().split('T')[0],
-        category: post.category || 'General'
+        category: formatCategoryDisplay(post.category)
       }));
     } catch (error) {
       console.error('Error in searchPosts:', error);
