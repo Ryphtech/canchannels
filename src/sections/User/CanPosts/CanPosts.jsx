@@ -155,12 +155,14 @@ const CanPosts = () => {
                     filteredPosts.map((post, index) => (
                       <CanPostCard
                         key={post.id || index}
+                        id={post.id}
                         image={post.image}
                         title={post.title}
                         description={post.description}
                         link={post.link}
                         publishedOn={post.publishedOn}
                         category={post.category}
+                        links={post.links}
                       />
                     ))
                   ) : (

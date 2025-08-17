@@ -200,11 +200,20 @@ export default function AdminDashboard() {
         title: postData.title.trim(),
         subtitle: postData.subtitle?.trim() || null,
         content: postData.content?.trim() || null,
+        category: postData.category || null,
+        keywords: postData.keywords?.trim() || null,
         featured: postData.featured || false,
         image: imageUrl,
         links: postData.links || [],
         created_at: new Date().toISOString()
       };
+
+      // Debug logging
+      console.log('=== ADMIN DASHBOARD DEBUG ===');
+      console.log('PostData received:', postData);
+      console.log('PostData.links:', postData.links);
+      console.log('PostToInsert object:', postToInsert);
+      console.log('=== END DEBUG ===');
 
       const { data, error } = await supabase
         .from("posts")
@@ -277,6 +286,8 @@ export default function AdminDashboard() {
         title: postData.title.trim(),
         subtitle: postData.subtitle?.trim() || null,
         content: postData.content?.trim() || null,
+        category: postData.category || null,
+        keywords: postData.keywords?.trim() || null,
         featured: postData.featured || false,
         image: imageUrl,
         links: postData.links || []
