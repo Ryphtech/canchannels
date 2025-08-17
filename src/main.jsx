@@ -30,6 +30,10 @@ const router = createBrowserRouter([
         element: <Content/>
       },
       {
+        path: "content/:postId",
+        element: <Content/>
+      },
+      {
         path: "privacy-policy",
         element: <PrivacyPolicy/>
       }

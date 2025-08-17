@@ -81,4 +81,14 @@ INSERT INTO posts (title, subtitle, content, image, links, featured, category, c
     false,
     'general',
     NOW() - INTERVAL '8 days'
+),
+(
+    'YouTube Video Tutorial: Getting Started with Can',
+    'Learn the basics of Can platform',
+    'A comprehensive tutorial video that walks you through the essential features and getting started with the Can platform. Perfect for beginners and those looking to refresh their knowledge.',
+    'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=400&fit=crop',
+    '[{"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "title": "Watch Tutorial Video"}]',
+    true,
+    'can-exclusive',
+    NOW() - INTERVAL '1 hour'
 );

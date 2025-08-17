@@ -1,3 +1,29 @@
+-- Create posts table
+CREATE TABLE IF NOT EXISTS posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    subtitle TEXT,
+    content TEXT,
+    image TEXT,
+    links JSONB DEFAULT '[]'::jsonb,
+    featured BOOLEAN DEFAULT FALSE,
+    category TEXT,
+    keywords TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create index for posts table
+CREATE INDEX IF NOT EXISTS idx_posts_created_at ON posts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_posts_category ON posts(category);
+CREATE INDEX IF NOT EXISTS idx_posts_featured ON posts(featured);
+
+-- Enable Row Level Security (RLS) for posts
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+
+-- Create policy to allow all operations on posts (you can restrict this based on your needs)
+CREATE POLICY "Allow all operations on posts" ON posts
+    FOR ALL USING (true);
+
 -- Create advertisements table
 CREATE TABLE IF NOT EXISTS advertisements (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

@@ -4,6 +4,8 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
+    category: '',
+    keywords: '',
     content: '',
     featured: false,
     image: null,
@@ -19,6 +21,8 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
       setFormData({
         title: post.title || '',
         subtitle: post.subtitle || '',
+        category: post.category || '',
+        keywords: post.keywords || '',
         content: post.content || '',
         featured: post.featured || false,
         image: null, // We don't pre-populate the file input
@@ -45,6 +49,8 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
       setFormData({
         title: '',
         subtitle: '',
+        category: '',
+        keywords: '',
         content: '',
         featured: false,
         image: null,
@@ -201,6 +207,44 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
                 placeholder="Enter post subtitle (optional)"
                 className="input input-bordered w-full"
               />
+            </div>
+
+            {/* Category */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Category *</span>
+              </label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="select select-bordered w-full"
+                required
+              >
+                <option value="">Select a category</option>
+                <option value="can-news">Can News</option>
+                <option value="can-exclusive">Can Exclusive</option>
+                <option value="cinema">Cinema</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+
+            {/* Keywords */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Keywords</span>
+              </label>
+              <input
+                type="text"
+                name="keywords"
+                value={formData.keywords}
+                onChange={handleInputChange}
+                placeholder="Enter keywords separated by commas (e.g., news, politics, technology)"
+                className="input input-bordered w-full"
+              />
+              <div className="text-sm text-base-content/60 mt-1">
+                Keywords help users find related content and improve search suggestions
+              </div>
             </div>
 
             {/* Content */}

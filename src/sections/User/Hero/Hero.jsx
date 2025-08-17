@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AdBanner from '../../../components/User/Adbanner/Adbanner'
 import { postsService } from '../../../backend/postsService'
 
 const Hero = () => {
+  const navigate = useNavigate();
   const [featuredPosts, setFeaturedPosts] = useState([]);
   const [recentPosts, setRecentPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -94,7 +96,10 @@ const Hero = () => {
             
             {/* Primary Highlight Area */}
             {mainFeaturedPost ? (
-              <div className="bg-base-200 rounded-lg h-96 relative overflow-hidden">
+              <div 
+                className="bg-base-200 rounded-lg h-96 relative overflow-hidden cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                onClick={() => navigate(`/content/${mainFeaturedPost.id}`)}
+              >
                 <img
                   src={mainFeaturedPost.image}
                   alt={mainFeaturedPost.title}
@@ -124,7 +129,11 @@ const Hero = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {secondaryFeaturedPosts.length > 0 ? (
                   secondaryFeaturedPosts.map((post) => (
-                    <div key={post.id} className="space-y-3">
+                    <div 
+                      key={post.id} 
+                      className="space-y-3 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                      onClick={() => navigate(`/content/${post.id}`)}
+                    >
                       {/* Article Thumbnail */}
                       <div className="bg-base-200 rounded-lg h-48 overflow-hidden">
                         <img
@@ -176,8 +185,12 @@ const Hero = () => {
           <div className="space-y-4">
             {recentPosts.length > 0 ? (
               recentPosts.map((post) => (
-                <div key={post.id} className="p-4 bg-base-200 rounded-lg">
-                  <h4 className="text-sm font-medium text-base-content leading-tight hover:text-primary cursor-pointer transition-colors duration-200">
+                <div 
+                  key={post.id} 
+                  className="p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors duration-200"
+                  onClick={() => navigate(`/content/${post.id}`)}
+                >
+                  <h4 className="text-sm font-medium text-base-content leading-tight hover:text-primary transition-colors duration-200">
                     {post.title}
                   </h4>
                   <p className="text-xs text-base-content/60 mt-1">

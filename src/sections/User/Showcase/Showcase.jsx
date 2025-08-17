@@ -95,17 +95,18 @@ const Showcase = () => {
               </div>
             ) : cinemaPosts.length > 0 ? (
               <div className="grid gap-6 grid-cols-2">
-                {cinemaPosts.map((post, index) => (
-                  <CanPostCard
-                    key={post.id || index}
-                    image={post.image}
-                    title={post.title}
-                    description={post.description}
-                    link={post.link}
-                    publishedOn={post.publishedOn}
-                    category={post.category}
-                  />
-                ))}
+                {                  cinemaPosts.map((post, index) => (
+                    <CanPostCard
+                      key={post.id || index}
+                      id={post.id}
+                      image={post.image}
+                      title={post.title}
+                      description={post.description}
+                      link={post.link}
+                      publishedOn={post.publishedOn}
+                      category={post.category}
+                    />
+                  ))}
               </div>
             ) : (
               <div className="text-center py-12">

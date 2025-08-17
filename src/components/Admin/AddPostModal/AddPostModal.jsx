@@ -5,6 +5,7 @@ const AddPostModal = ({ onClose, onSubmit }) => {
     title: '',
     subtitle: '',
     category: '',
+    keywords: '',
     content: '',
     featured: false,
     image: null,
@@ -23,11 +24,20 @@ const AddPostModal = ({ onClose, onSubmit }) => {
       alert('Please select a category')
       return
     }
+    
+    // Debug logging
+    console.log('=== ADD POST MODAL DEBUG ===');
+    console.log('FormData being submitted:', formData);
+    console.log('Links array:', formData.links);
+    console.log('Links length:', formData.links.length);
+    console.log('=== END DEBUG ===');
+    
     onSubmit(formData)
     setFormData({
       title: '',
       subtitle: '',
       category: '',
+      keywords: '',
       content: '',
       featured: false,
       image: null,
@@ -197,6 +207,24 @@ const AddPostModal = ({ onClose, onSubmit }) => {
                 <option value="cinema">Cinema</option>
                 <option value="general">General</option>
               </select>
+            </div>
+
+            {/* Keywords */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Keywords</span>
+              </label>
+              <input
+                type="text"
+                name="keywords"
+                value={formData.keywords}
+                onChange={handleInputChange}
+                placeholder="Enter keywords separated by commas (e.g., news, politics, technology)"
+                className="input input-bordered w-full"
+              />
+              <div className="text-sm text-base-content/60 mt-1">
+                Keywords help users find related content and improve search suggestions
+              </div>
             </div>
 
             {/* Content */}
