@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo_small from '../../../assets/can-channels-logo-small.png'
 import Navlinks from "../NavLinks/Navlinks";
+<<<<<<< HEAD
 import { postsService } from '../../../backend/postsService';
 
 const Header = () => {
@@ -9,6 +10,17 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+=======
+import { useCookieConsent } from '../../../contexts/CookieConsentContext';
+import { useTheme } from '../../../contexts/ThemeContext';
+import CookiePreferences from '../../Global/CookiePreferences/CookiePreferences';
+
+const Header = () => {
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [showCookiePreferences, setShowCookiePreferences] = useState(false);
+  const { hasConsented } = useCookieConsent();
+  const { theme, toggleTheme } = useTheme();
+>>>>>>> 4353155f59113f4f44fab4dd90a9e7b7968a9996
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -27,6 +39,7 @@ const Header = () => {
   // Format time as HH:MM:SS AM/PM
   const formattedTime = currentDateTime.toLocaleTimeString();
 
+<<<<<<< HEAD
   const [theme, setTheme] = useState('light')
   
     // Check for saved theme preference or default to light mode
@@ -106,6 +119,8 @@ const Header = () => {
     };
   }, [showSearch]);
 
+=======
+>>>>>>> 4353155f59113f4f44fab4dd90a9e7b7968a9996
   return (
     <div className="search-container">
       <div className="navbar bg-base-100 shadow-sm md:px-20 lg:px-30">
@@ -173,6 +188,18 @@ const Header = () => {
         <div className="navbar-end flex items-center gap-2">
   {/* Advertise Button */}
   <a className="btn btn-ghost">Advertise</a>
+
+  {/* Cookie Preferences Button */}
+  <button 
+    onClick={() => setShowCookiePreferences(true)}
+    className="btn btn-ghost btn-circle"
+    aria-label="Cookie Preferences"
+    title="Cookie Preferences"
+  >
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  </button>
 
   {/* Search Icon Button */}
   <button 
@@ -312,6 +339,12 @@ const Header = () => {
       )}
 
       <Navlinks/>
+      
+      {/* Cookie Preferences Modal */}
+      <CookiePreferences 
+        isOpen={showCookiePreferences} 
+        onClose={() => setShowCookiePreferences(false)} 
+      />
     </div>
   );
 };

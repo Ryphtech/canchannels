@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logo_small from '../../../assets/can-channels-logo-small.png'
+import ThemeToggle from '../../Global/ThemeToggle/ThemeToggle'
 
 
 
@@ -25,7 +26,7 @@ const AdminHeader = () => {
   
   return (
     <div>
-      <div className="navbar bg-base-100 shadow-sm md:px-20 lg:px-50">
+      <div className="navbar bg-base-100 shadow-sm px-4 sm:px-6 lg:px-8">
         <div className="navbar-start">
           <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -63,7 +64,7 @@ const AdminHeader = () => {
             </ul>
           </div>
           <div>
-            <img src={logo_small} className="w-35 md:w-45 rounded bg-transparent dark:bg-white" alt="logo" />
+            <img src={logo_small} className="w-24 sm:w-32 md:w-40 lg:w-44 rounded bg-transparent dark:bg-white" alt="logo" />
           </div>
         </div>
         <div className="navbar-center hidden lg:flex">
@@ -83,9 +84,13 @@ const AdminHeader = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <div className="badge badge-primary mr-4">ADMIN</div>
-          <a className="btn btn-ghost" href="/">View Site</a>
-          <div className="ml-4 text-center text-sm leading-tight">
+          <div className="badge badge-primary mr-2 sm:mr-4 text-xs sm:text-sm">ADMIN</div>
+          <ThemeToggle />
+          <a className="btn btn-ghost btn-sm sm:btn-md" href="/">
+            <span className="hidden sm:inline">View Site</span>
+            <span className="sm:hidden">Site</span>
+          </a>
+          <div className="ml-2 sm:ml-4 text-center text-xs sm:text-sm leading-tight hidden sm:block">
             <div>{formattedDate}</div>
             <div>{formattedTime}</div>
           </div>

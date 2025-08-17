@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const EditPostModal = ({ post, onClose, onSubmit }) => {
+const EditPostModal = ({ onClose, onSubmit, post }) => {
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
@@ -11,8 +11,9 @@ const EditPostModal = ({ post, onClose, onSubmit }) => {
   })
   const [imagePreview, setImagePreview] = useState(null)
   const [currentLink, setCurrentLink] = useState({ url: '', title: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Initialize form data with existing post data
+  // Initialize form data when post prop changes
   useEffect(() => {
     if (post) {
       setFormData({
@@ -20,32 +21,42 @@ const EditPostModal = ({ post, onClose, onSubmit }) => {
         subtitle: post.subtitle || '',
         content: post.content || '',
         featured: post.featured || false,
-        image: null, // We'll handle existing images separately
-        links: post.links || []
+        image: null, // We don't pre-populate the file input
+        links: Array.isArray(post.links) ? post.links : []
       })
-      
-      // Set image preview if post has an existing image
+      // Set image preview if post has an image
       if (post.image) {
         setImagePreview(post.image)
       }
     }
   }, [post])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.title.trim()) {
       alert('Please enter a title')
       return
     }
-    
-    // Include the original image if no new image was uploaded
-    const submitData = {
-      ...formData,
-      image: formData.image || (imagePreview === post.image ? post.image : null)
+
+    setIsSubmitting(true)
+    try {
+      await onSubmit(formData)
+      // Reset form
+      setFormData({
+        title: '',
+        subtitle: '',
+        content: '',
+        featured: false,
+        image: null,
+        links: []
+      })
+      setImagePreview(null)
+      setCurrentLink({ url: '', title: '' })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+    } finally {
+      setIsSubmitting(false)
     }
-    
-    onSubmit(post.id, submitData)
-    onClose()
   }
 
   const handleInputChange = (e) => {
@@ -113,7 +124,7 @@ const EditPostModal = ({ post, onClose, onSubmit }) => {
     // Basic URL validation
     try {
       new URL(currentLink.url)
-    } catch (err) {
+    } catch (error) {
       alert('Please enter a valid URL (e.g., https://example.com)')
       return
     }
@@ -219,10 +230,10 @@ const EditPostModal = ({ post, onClose, onSubmit }) => {
                     accept="image/*"
                     onChange={handleImageChange}
                     className="hidden"
-                    id="image-upload"
+                    id="image-upload-edit"
                   />
                   <label
-                    htmlFor="image-upload"
+                    htmlFor="image-upload-edit"
                     className="cursor-pointer flex flex-col items-center gap-2"
                   >
                     <svg className="w-12 h-12 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,16 +264,9 @@ const EditPostModal = ({ post, onClose, onSubmit }) => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
-                  {formData.image && (
-                    <div className="mt-2 text-sm text-base-content/60 text-center">
-                      {formData.image.name} ({(formData.image.size / 1024 / 1024).toFixed(2)} MB)
-                    </div>
-                  )}
-                  {!formData.image && imagePreview === post.image && (
-                    <div className="mt-2 text-sm text-base-content/60 text-center">
-                      Current image (click to replace)
-                    </div>
-                  )}
+                  <div className="mt-2 text-sm text-base-content/60 text-center">
+                    {formData.image?.name ? `${formData.image.name} (${(formData.image.size / 1024 / 1024).toFixed(2)} MB)` : 'Current image'}
+                  </div>
                 </div>
               )}
             </div>
@@ -363,17 +367,28 @@ const EditPostModal = ({ post, onClose, onSubmit }) => {
                 type="button"
                 onClick={onClose}
                 className="btn btn-ghost"
+                disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 className="btn btn-primary"
+                disabled={isSubmitting}
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
-                Update Post
+                {isSubmitting ? (
+                  <>
+                    <div className="loading loading-spinner loading-sm"></div>
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Update Post
+                  </>
+                )}
               </button>
             </div>
           </form>

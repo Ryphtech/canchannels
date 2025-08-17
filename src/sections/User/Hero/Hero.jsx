@@ -195,7 +195,7 @@ const Hero = () => {
               ))
             )}
           </div>
-          <AdBanner image='https://www.svgrepo.com/show/508699/landscape-placeholder.svg' link="https://example.com"/>
+          <AdBanner position="hero-section" fallbackImage="https://www.svgrepo.com/show/508699/landscape-placeholder.svg" fallbackLink="https://example.com"/>
         </div>
       </div>
     </div>
