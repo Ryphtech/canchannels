@@ -4,15 +4,18 @@ import Footer from '../../components/Global/Footer/Footer'
 import CookieBanner from '../../components/Global/CookieBanner/CookieBanner'
 import NotificationBell from '../../components/Global/NotificationBanner/NotificationBell'
 import { ThemeProvider } from '../../contexts/ThemeContext'
+import { AdminAuthProvider } from '../../contexts/AdminAuthContext'
 
 
 const Adminroot = () => {
   return (
     <ThemeProvider>
-      <Outlet/>
-      <Footer/>
-      <CookieBanner/>
-      <NotificationBell/>
+      <AdminAuthProvider>
+        <Outlet/>
+        <Footer/>
+        <CookieBanner/>
+        <NotificationBell/>
+      </AdminAuthProvider>
     </ThemeProvider>
   )
 }

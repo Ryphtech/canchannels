@@ -11,6 +11,8 @@ import Userroot from './root/Userroot/Userroot';
 import Homepage from './pages/User/Homepage/Homepage';
 import Adminroot from './root/Adminroot/Adminroot';
 import AdminDashboard from './pages/Admin/AdminDashboard/AdminDashboard';
+import AdminLogin from './pages/Admin/AdminLogin/AdminLogin';
+import ProtectedRoute from './components/Admin/ProtectedRoute/ProtectedRoute';
 import Content from './pages/User/ContentDisplayPage/Content';
 import PrivacyPolicy from './pages/Global/PrivacyPolicy/PrivacyPolicy';
 import { CookieConsentProvider } from './contexts/CookieConsentContext';
@@ -41,7 +43,11 @@ const router = createBrowserRouter([
     children:[
       {
         path: "/admin",
-        element: <AdminDashboard/>
+        element: <ProtectedRoute><AdminDashboard/></ProtectedRoute>
+      },
+      {
+        path: "/admin/login",
+        element: <AdminLogin/>
       }
     ]
   }
