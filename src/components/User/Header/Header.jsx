@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import logo_small from '../../../assets/can-channels-logo-small.png'
 import Navlinks from "../NavLinks/Navlinks";
+import { useCookieConsent } from '../../../contexts/CookieConsentContext';
+import { useTheme } from '../../../contexts/ThemeContext';
+import CookiePreferences from '../../Global/CookiePreferences/CookiePreferences';
 
 const Header = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [showCookiePreferences, setShowCookiePreferences] = useState(false);
+  const { hasConsented } = useCookieConsent();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -22,24 +28,6 @@ const Header = () => {
   // Format time as HH:MM:SS AM/PM
   const formattedTime = currentDateTime.toLocaleTimeString();
 
-  const [theme, setTheme] = useState('light')
-  
-    // Check for saved theme preference or default to light mode
-    useEffect(() => {
-      const savedTheme = localStorage.getItem('theme') || 'light'
-      setTheme(savedTheme)
-      // Apply theme to document element
-      document.documentElement.setAttribute('data-theme', savedTheme)
-    }, [])
-
-  // Toggle theme function
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    // Apply theme to document element
-    document.documentElement.setAttribute('data-theme', newTheme)
-    localStorage.setItem('theme', newTheme)
-  }
   return (
     <div>
       <div className="navbar bg-base-100 shadow-sm md:px-20 lg:px-30">
@@ -108,6 +96,18 @@ const Header = () => {
   {/* Advertise Button */}
   <a className="btn btn-ghost">Advertise</a>
 
+  {/* Cookie Preferences Button */}
+  <button 
+    onClick={() => setShowCookiePreferences(true)}
+    className="btn btn-ghost btn-circle"
+    aria-label="Cookie Preferences"
+    title="Cookie Preferences"
+  >
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  </button>
+
   {/* Search Icon Button */}
   <button className="btn btn-ghost btn-circle" aria-label="Search">
     <svg
@@ -149,6 +149,12 @@ const Header = () => {
 
       </div>
       <Navlinks/>
+      
+      {/* Cookie Preferences Modal */}
+      <CookiePreferences 
+        isOpen={showCookiePreferences} 
+        onClose={() => setShowCookiePreferences(false)} 
+      />
     </div>
   );
 };

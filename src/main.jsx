@@ -12,10 +12,9 @@ import Homepage from './pages/User/Homepage/Homepage';
 import Adminroot from './root/Adminroot/Adminroot';
 import AdminDashboard from './pages/Admin/AdminDashboard/AdminDashboard';
 import Content from './pages/User/ContentDisplayPage/Content';
-
-// Apply theme on app start
-const savedTheme = localStorage.getItem('theme') || 'light'
-document.documentElement.setAttribute('data-theme', savedTheme)
+import PrivacyPolicy from './pages/Global/PrivacyPolicy/PrivacyPolicy';
+import { CookieConsentProvider } from './contexts/CookieConsentContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "content",
         element: <Content/>
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy/>
       }
     ]
   },
@@ -46,6 +49,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider>
+      <CookieConsentProvider>
+        <RouterProvider router={router} />
+      </CookieConsentProvider>
+    </ThemeProvider>
   </StrictMode>,
 )
