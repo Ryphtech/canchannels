@@ -196,8 +196,12 @@ const Content = () => {
           <img
             src={mainPost.image}
             alt={mainPost.title}
-            className="w-full h-48 md:h-64 object-cover rounded-lg mb-4"
+            className="w-full h-auto object-contain rounded-lg mb-2"
           />
+          <p className="text-sm text-gray-500 mb-2">{mainPost.publishedOn}</p>
+          <div className="mb-4">
+            <span className="font-medium border px-2 py-1 rounded">{mainPost.category}</span>
+          </div>
           
                      {/* Display full content if available, otherwise show description */}
            {postId && mainPost.content ? (
@@ -234,10 +238,7 @@ const Content = () => {
             </div>
           )}
 
-          <div className="flex justify-between items-center text-sm text-gray-500">
-            <span className="font-medium border px-2 py-1 rounded">{mainPost.category}</span>
-            <span>{mainPost.publishedOn}</span>
-          </div>
+          
         </div>
       </div>
 
