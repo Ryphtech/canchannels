@@ -1,12 +1,11 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html",
-      "missing": [
-        { "type": "filesystem" }
-      ]
-    }
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/admin", "destination": "/index.html" },
+    { "source": "/admin/(.*)", "destination": "/index.html" },
+    { "source": "/content/(.*)", "destination": "/index.html" },
+    { "source": "/privacy-policy", "destination": "/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
 
