@@ -190,7 +190,7 @@ const Content = () => {
             </button>
           </div>
         )}
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow p-4">
+        <div className="rounded-xl shadow p-4">
           <h2 className="text-2xl font-bold mb-4">{mainPost.title}</h2>
 
           <img
@@ -201,7 +201,7 @@ const Content = () => {
           
                      {/* Display full content if available, otherwise show description */}
            {postId && mainPost.content ? (
-             <div className="text-gray-700 dark:text-gray-300 mb-4 text-justify leading-relaxed break-words overflow-wrap-anywhere">
+             <div className="mb-4 text-justify leading-relaxed break-words overflow-wrap-anywhere">
                {mainPost.content.split('\n').map((paragraph, index) => (
                  <p key={index} className="mb-4 last:mb-0">
                    {paragraph}
@@ -209,7 +209,7 @@ const Content = () => {
                ))}
              </div>
            ) : (
-             <p className="text-gray-700 dark:text-gray-300 mb-4 text-justify leading-relaxed break-words overflow-wrap-anywhere">
+             <p className=" mb-4 text-justify leading-relaxed break-words overflow-wrap-anywhere">
                {mainPost.description}
              </p>
            )}
@@ -277,7 +277,7 @@ const Content = () => {
             console.log('=== END YOUTUBE DETECTION ===');
             
             return youtubeLink ? (
-              <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+              <div className="p-4 rounded-lg shadow">
                 <h3 className="font-semibold text-lg mb-2">Watch Now</h3>
                 <div className="aspect-w-16 aspect-h-9">
                   <iframe
@@ -290,7 +290,7 @@ const Content = () => {
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+              <div className="p-4 rounded-lg shadow">
                 <h3 className="font-semibold text-lg mb-2">Watch Now</h3>
                 <div className="flex items-center justify-center h-48 bg-gray-200 dark:bg-gray-700 rounded">
                   <div className="text-center text-gray-500 dark:text-gray-400">
@@ -305,7 +305,7 @@ const Content = () => {
           })()}
 
                  {/* Recommendations */}
-         <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+         <div className="p-4 rounded-lg shadow">
            <h3 className="font-semibold text-lg mb-4">
              {postId && currentPost?.keywords ? 'Related Posts' : 'Recommendations'}
            </h3>
