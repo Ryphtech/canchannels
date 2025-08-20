@@ -10,7 +10,7 @@ const PostCard = ({ post, onEdit, onDelete, isFeatured = false }) => {
             <img
               src={post.image}
               alt={post.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           ) : (
             <div className="text-base-content/50 text-4xl sm:text-6xl">🏔️</div>
@@ -101,7 +101,7 @@ const PostCard = ({ post, onEdit, onDelete, isFeatured = false }) => {
           <img
             src={post.image}
             alt={post.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="text-base-content/50 text-2xl sm:text-3xl lg:text-4xl">📰</div>

@@ -5,7 +5,7 @@ const CanPostCard = ({ image, title, description, link, publishedOn, category })
     <div className="w-full max-w-sm mx-auto rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
       {/* Image */}
       <img
-        className="w-full h-48 object-cover"
+        className="w-full h-48 object-contain"
         src={image}
         alt={title}
       />

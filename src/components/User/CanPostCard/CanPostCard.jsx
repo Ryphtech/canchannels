@@ -15,7 +15,7 @@ const CanPostCard = ({ id, image, title, description, link, publishedOn, categor
     >
       {/* Image */}
       <img
-        className="w-full h-48 object-cover"
+        className="w-full h-48 object-contain"
         src={image}
         alt={title}
       />
@@ -38,17 +38,14 @@ const CanPostCard = ({ id, image, title, description, link, publishedOn, categor
           {description}
         </p>
 
-        {/* Read More */}
-        {link && (
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium mt-2"
-          >
-            Read More →
-          </a>
-        )}
+        {/* Read More navigates to content page */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); navigate(`/content/${id}`); }}
+          className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium mt-2 text-left"
+        >
+          Read More →
+        </button>
       </div>
     </div>
   );

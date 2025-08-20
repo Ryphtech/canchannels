@@ -103,7 +103,7 @@ const Hero = () => {
                 <img
                   src={mainFeaturedPost.image}
                   alt={mainFeaturedPost.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -139,7 +139,7 @@ const Hero = () => {
                         <img
                           src={post.image}
                           alt={post.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                       

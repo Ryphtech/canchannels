@@ -321,7 +321,7 @@ const Content = () => {
                    <img
                      src={post.image}
                      alt={post.title}
-                     className="w-16 h-16 object-cover rounded"
+                     className="w-16 h-16 object-contain rounded"
                    />
                    <div className="flex flex-col">
                      <p className="text-sm font-semibold line-clamp-2">{post.title}</p>

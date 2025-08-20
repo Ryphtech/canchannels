@@ -255,7 +255,7 @@ const AddAdvertisementModal = ({ onClose, onSubmit, positions }) => {
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg border border-base-300"
+                    className="w-full h-48 object-contain rounded-lg border border-base-300"
                   />
                   <button
                     type="button"

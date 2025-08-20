@@ -178,7 +178,7 @@ const AdvertisementManager = () => {
                   <img
                     src={ad.image_url}
                     alt={ad.title}
-                    className="w-full h-32 sm:h-40 object-cover rounded-lg"
+                    className="w-full h-32 sm:h-40 object-contain rounded-lg"
                   />
                   <div className="absolute top-2 left-2">
                     <span className={`badge badge-sm ${ad.is_active ? 'badge-success' : 'badge-error'}`}>
