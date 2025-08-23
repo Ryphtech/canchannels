@@ -48,12 +48,15 @@ export const postsService = {
           id: post.id,
           image: post.image || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
           title: post.title,
-          description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
+          description: post.subtitle || post.content_top?.substring(0, 150) + '...' || post.content?.substring(0, 150) + '...' || 'No description available',
           link: post.links?.[0] || null,
           publishedOn: new Date(post.created_at).toISOString().split('T')[0],
           category: formattedCategory,
           keywords: post.keywords || null,
-          links: post.links || []
+          links: post.links || [],
+          content_top: post.content_top || null,
+          content_down: post.content_down || null,
+          content_images: post.content_images || []
         };
       });
     } catch (error) {
@@ -80,12 +83,15 @@ export const postsService = {
         id: post.id,
         image: post.image || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
         title: post.title,
-        description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
+        description: post.subtitle || post.content_top?.substring(0, 150) + '...' || post.content?.substring(0, 150) + '...' || 'No description available',
         link: post.links?.[0] || null,
         publishedOn: new Date(post.created_at).toISOString().split('T')[0],
         category: formatCategoryDisplay(post.category),
         keywords: post.keywords || null,
-        links: post.links || []
+        links: post.links || [],
+        content_top: post.content_top || null,
+        content_down: post.content_down || null,
+        content_images: post.content_images || []
       }));
     } catch (error) {
       console.error('Error in fetchPostsByCategory:', error);
@@ -111,12 +117,15 @@ export const postsService = {
         id: post.id,
         image: post.image || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
         title: post.title,
-        description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
+        description: post.subtitle || post.content_top?.substring(0, 150) + '...' || post.content?.substring(0, 150) + '...' || 'No description available',
         link: post.links?.[0] || null,
         publishedOn: new Date(post.created_at).toISOString().split('T')[0],
         category: formatCategoryDisplay(post.category),
         keywords: post.keywords || null,
-        links: post.links || []
+        links: post.links || [],
+        content_top: post.content_top || null,
+        content_down: post.content_down || null,
+        content_images: post.content_images || []
       }));
     } catch (error) {
       console.error('Error in fetchFeaturedPosts:', error);
@@ -130,7 +139,7 @@ export const postsService = {
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .or(`title.ilike.%${query}%,subtitle.ilike.%${query}%,content.ilike.%${query}%`)
+        .or(`title.ilike.%${query}%,subtitle.ilike.%${query}%,content.ilike.%${query}%,content_top.ilike.%${query}%,content_down.ilike.%${query}%`)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -142,12 +151,15 @@ export const postsService = {
         id: post.id,
         image: post.image || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
         title: post.title,
-        description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
+        description: post.subtitle || post.content_top?.substring(0, 150) + '...' || post.content?.substring(0, 150) + '...' || 'No description available',
         link: post.links?.[0] || null,
         publishedOn: new Date(post.created_at).toISOString().split('T')[0],
         category: formatCategoryDisplay(post.category),
         keywords: post.keywords || null,
-        links: post.links || []
+        links: post.links || [],
+        content_top: post.content_top || null,
+        content_down: post.content_down || null,
+        content_images: post.content_images || []
       }));
     } catch (error) {
       console.error('Error in searchPosts:', error);
@@ -179,7 +191,10 @@ export const postsService = {
         title: data.title,
         subtitle: data.subtitle,
         content: data.content,
-        description: data.subtitle || data.content?.substring(0, 150) + '...' || 'No description available',
+        content_top: data.content_top || null,
+        content_down: data.content_down || null,
+        content_images: data.content_images || [],
+        description: data.subtitle || data.content_top?.substring(0, 150) + '...' || data.content?.substring(0, 150) + '...' || 'No description available',
         link: data.links?.[0] || null,
         publishedOn: new Date(data.created_at).toISOString().split('T')[0],
         category: formatCategoryDisplay(data.category),
@@ -233,12 +248,15 @@ export const postsService = {
         id: post.id,
         image: post.image || 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg',
         title: post.title,
-        description: post.subtitle || post.content?.substring(0, 150) + '...' || 'No description available',
+        description: post.subtitle || post.content_top?.substring(0, 150) + '...' || post.content?.substring(0, 150) + '...' || 'No description available',
         link: post.links?.[0] || null,
         publishedOn: new Date(post.created_at).toISOString().split('T')[0],
         category: formatCategoryDisplay(post.category),
         keywords: post.keywords || null,
-        links: post.links || []
+        links: post.links || [],
+        content_top: post.content_top || null,
+        content_down: post.content_down || null,
+        content_images: post.content_images || []
       }));
     } catch (error) {
       console.error('Error in fetchPostsByKeywords:', error);

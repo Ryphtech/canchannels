@@ -194,12 +194,47 @@ export default function AdminDashboard() {
         }
       }
 
+      // Handle content images upload if present
+      let contentImageUrls = [];
+      if (postData.content_images && postData.content_images.length > 0) {
+        try {
+          for (let i = 0; i < postData.content_images.length; i++) {
+            const contentImage = postData.content_images[i];
+            if (contentImage.file) {
+              const fileExt = contentImage.file.name.split('.').pop();
+              const fileName = `${postId}_content_${i}.${fileExt}`;
+              
+              const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('post-images')
+                .upload(fileName, contentImage.file);
+
+              if (uploadError) {
+                console.error('Error uploading content image:', uploadError);
+                alert(`Failed to upload content image ${i + 1}. Continuing without it.`);
+              } else {
+                // Get public URL for the uploaded image
+                const { data: urlData } = supabase.storage
+                  .from('post-images')
+                  .getPublicUrl(fileName);
+                
+                contentImageUrls.push(urlData.publicUrl);
+              }
+            }
+          }
+        } catch (uploadError) {
+          console.error('Error handling content image uploads:', uploadError);
+          alert('Some content images failed to upload, but post will be created.');
+        }
+      }
+
       // Prepare post data for database
       const postToInsert = {
         id: postId,
         title: postData.title.trim(),
         subtitle: postData.subtitle?.trim() || null,
-        content: postData.content?.trim() || null,
+        content_top: postData.content_top?.trim() || null,
+        content_down: postData.content_down?.trim() || null,
+        content_images: contentImageUrls,
         category: postData.category || null,
         keywords: postData.keywords?.trim() || null,
         featured: postData.featured || false,
@@ -281,11 +316,50 @@ export default function AdminDashboard() {
         }
       }
 
+      // Handle content images upload if present
+      let contentImageUrls = editingPost.content_images || [];
+      if (postData.content_images && postData.content_images.length > 0) {
+        try {
+          contentImageUrls = [];
+          for (let i = 0; i < postData.content_images.length; i++) {
+            const contentImage = postData.content_images[i];
+            if (contentImage.file) {
+              const fileExt = contentImage.file.name.split('.').pop();
+              const fileName = `${editingPost.id}_content_${i}.${fileExt}`;
+              
+              const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('post-images')
+                .upload(fileName, contentImage.file, { upsert: true });
+
+              if (uploadError) {
+                console.error('Error uploading content image:', uploadError);
+                alert(`Failed to upload content image ${i + 1}. Continuing without it.`);
+              } else {
+                // Get public URL for the uploaded image
+                const { data: urlData } = supabase.storage
+                  .from('post-images')
+                  .getPublicUrl(fileName);
+                
+                contentImageUrls.push(urlData.publicUrl);
+              }
+            } else if (contentImage.preview) {
+              // Keep existing image URL
+              contentImageUrls.push(contentImage.preview);
+            }
+          }
+        } catch (uploadError) {
+          console.error('Error handling content image uploads:', uploadError);
+          alert('Some content images failed to upload, but post will be updated.');
+        }
+      }
+
       // Prepare post data for database update
       const postToUpdate = {
         title: postData.title.trim(),
         subtitle: postData.subtitle?.trim() || null,
-        content: postData.content?.trim() || null,
+        content_top: postData.content_top?.trim() || null,
+        content_down: postData.content_down?.trim() || null,
+        content_images: contentImageUrls,
         category: postData.category || null,
         keywords: postData.keywords?.trim() || null,
         featured: postData.featured || false,
