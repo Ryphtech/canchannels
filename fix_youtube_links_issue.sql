@@ -109,7 +109,7 @@ SELECT
         WHEN links @> '[{"url": "https://www.youtube.com"}]'::jsonb 
         THEN '🎥 Has YouTube Video'
         WHEN jsonb_array_length(links) > 0 
-        THEN '🔗 Has Regular Links'
+        THEN '🔗 Has Regular Links' 
         ELSE '📝 No Links'
     END as link_status
 FROM posts 

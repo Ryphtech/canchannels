@@ -30,10 +30,11 @@ This guide will help you set up admin authentication for your CanChannels applic
 ```sql
 UPDATE public.profiles 
 SET role = 'admin' 
-WHERE id = 'your-admin-user-uuid-here';
+WHERE id = 'c004bf47-1979-48e6-bfc6-256e15b1faa3';
 ```
 
 ## Step 4: Test the System
+
 
 1. Start your development server
 2. Navigate to `/admin/login`
