@@ -3,6 +3,7 @@ import Hero from '../../../sections/User/Hero/Hero'
 import AdBanner from '../../../components/User/Adbanner/Adbanner'
 import CanPosts from '../../../sections/User/CanPosts/CanPosts';
 import Showcase from '../../../sections/User/Showcase/Showcase';
+import NewsCinemaSection from '../../../sections/User/NewsCinemaSection';
 
 const Homepage = () => {
   return (
@@ -31,10 +32,11 @@ const Homepage = () => {
     </div>
   </div>
 
-        <AdBanner position="homepage-top" fallbackImage="https://www.shutterstock.com/image-vector/winter-sale-horizontal-advertising-banner-260nw-536057692.jpg" fallbackLink="https://example.com"/>
+        <AdBanner position="homepage-top"/>
         <Hero/>
-        <CanPosts/>
         <Showcase/>
+        <NewsCinemaSection/>
+        <CanPosts/>
     </div>
   )
 }
