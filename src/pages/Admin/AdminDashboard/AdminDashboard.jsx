@@ -6,6 +6,7 @@ import EditPostModal from "../../../components/Admin/EditPostModal/EditPostModal
 import AdminHeader from "../../../components/Admin/AdminHeader/AdminHeader";
 import AdvertisementManager from "../../../components/Admin/AdvertisementManager/AdvertisementManager";
 import SubAdminManager from "../../../components/Admin/SubAdminManager/SubAdminManager";
+import NotificationManager from "../../../components/Admin/NotificationManager/NotificationManager";
 import { useAdminAuth } from "../../../contexts/AdminAuthContext";
 
 export default function AdminDashboard() {
@@ -324,18 +325,58 @@ export default function AdminDashboard() {
   const handleDeletePost = async (postId) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        const { error } = await supabase
+        // First, get the post to check if it has an image
+        const { data: postData, error: fetchError } = await supabase
+          .from("posts")
+          .select("image")
+          .eq("id", postId)
+          .single();
+
+        if (fetchError) {
+          console.error("Error fetching post for deletion:", fetchError);
+          alert("Failed to fetch post details. Please try again.");
+          return;
+        }
+
+        // Delete the post from database
+        const { error: deleteError } = await supabase
           .from("posts")
           .delete()
           .eq("id", postId);
 
-        if (error) {
-          console.error("Error deleting post:", error);
+        if (deleteError) {
+          console.error("Error deleting post:", deleteError);
           alert("Failed to delete post. Please try again.");
-        } else {
-          await fetchPosts();
-          alert("Post deleted successfully!");
+          return;
         }
+
+        // If the post had an image, delete it from storage
+        if (postData.image && postData.image.includes('post-images')) {
+          try {
+            // Extract filename from the image URL
+            const imageUrl = new URL(postData.image);
+            const pathParts = imageUrl.pathname.split('/');
+            const fileName = pathParts[pathParts.length - 1];
+            
+            // Delete the image from storage
+            const { error: storageError } = await supabase.storage
+              .from('post-images')
+              .remove([fileName]);
+
+            if (storageError) {
+              console.warn("Warning: Failed to delete image from storage:", storageError);
+              // Don't fail the entire operation if image deletion fails
+            } else {
+              console.log("Image deleted from storage successfully");
+            }
+          } catch (storageError) {
+            console.warn("Warning: Error deleting image from storage:", storageError);
+            // Don't fail the entire operation if image deletion fails
+          }
+        }
+
+        await fetchPosts();
+        alert("Post deleted successfully!");
       } catch (error) {
         console.error("Error deleting post:", error);
         alert("Failed to delete post. Please try again.");
@@ -405,6 +446,15 @@ export default function AdminDashboard() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
             Advertisement Management
+          </button>
+          <button
+            className={`tab ${activeTab === 'notifications' ? 'tab-active' : ''}`}
+            onClick={() => setActiveTab('notifications')}
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-5 5v-5zM11 19H6a2 2 0 01-2-2V6a2 2 0 012-2h5m5 0v5m0-5h5m-5 0l-5 5" />
+            </svg>
+            Notifications
           </button>
           {userRole === 'admin' && (
             <button
@@ -589,6 +639,8 @@ export default function AdminDashboard() {
               )}
             </div>
           </>
+        ) : activeTab === 'notifications' ? (
+          <NotificationManager />
         ) : activeTab === 'subadmins' ? (
           userRole === 'admin' ? (
             <SubAdminManager />

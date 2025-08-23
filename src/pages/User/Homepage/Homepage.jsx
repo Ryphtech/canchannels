@@ -31,7 +31,7 @@ const Homepage = () => {
     </div>
   </div>
 
-        <AdBanner position="homepage-top" fallbackImage="https://www.shutterstock.com/image-vector/winter-sale-horizontal-advertising-banner-260nw-536057692.jpg" fallbackLink="https://example.com"/>
+        <AdBanner position="homepage-top" />
         <Hero/>
         <CanPosts/>
         <Showcase/>
