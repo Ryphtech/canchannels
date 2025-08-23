@@ -262,5 +262,48 @@ export const postsService = {
       console.error('Error in fetchPostsByKeywords:', error);
       return [];
     }
+  },
+
+  // Fetch recent content images used in posts
+  async fetchRecentContentImages(limit = 20) {
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('content_images, title, created_at')
+        .not('content_images', 'is', null)
+        .not('content_images', 'eq', '[]')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error('Error fetching recent content images:', error);
+        throw error;
+      }
+
+      // Extract and flatten all content images with metadata
+      const allImages = [];
+      data.forEach(post => {
+        if (post.content_images && Array.isArray(post.content_images)) {
+          post.content_images.forEach(imageUrl => {
+            allImages.push({
+              url: imageUrl,
+              postTitle: post.title,
+              postCreatedAt: post.created_at,
+              usedIn: post.title
+            });
+          });
+        }
+      });
+
+      // Remove duplicates and sort by most recent
+      const uniqueImages = allImages.filter((image, index, self) => 
+        index === self.findIndex(img => img.url === image.url)
+      );
+
+      return uniqueImages.slice(0, limit);
+    } catch (error) {
+      console.error('Error in fetchRecentContentImages:', error);
+      throw error;
+    }
   }
 };

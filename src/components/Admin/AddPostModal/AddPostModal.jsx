@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import RecentUploadsModal from './RecentUploadsModal'
 
 const AddPostModal = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ const AddPostModal = ({ onClose, onSubmit }) => {
   const [imagePreview, setImagePreview] = useState(null)
   const [contentImagePreviews, setContentImagePreviews] = useState([])
   const [currentLink, setCurrentLink] = useState({ url: '', title: '' })
+  const [showRecentUploads, setShowRecentUploads] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -149,6 +151,28 @@ const AddPostModal = ({ onClose, onSubmit }) => {
       content_images: prev.content_images.filter(img => img.id !== imageId)
     }))
     setContentImagePreviews(prev => prev.filter(img => img.id !== imageId))
+  }
+
+  const handleRecentImageSelect = (imageUrl) => {
+    // Check if adding this image would exceed the 4 image limit
+    if (formData.content_images.length >= 4) {
+      alert('You can only upload a maximum of 4 images for content')
+      return
+    }
+
+    const newImage = {
+      id: Date.now() + Math.random(),
+      file: null, // No file since it's from recent uploads
+      preview: imageUrl,
+      url: imageUrl // Store the URL for submission
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      content_images: [...prev.content_images, newImage]
+    }))
+    
+    setContentImagePreviews(prev => [...prev, newImage])
   }
 
   const handleLinkChange = (e) => {
@@ -307,29 +331,47 @@ const AddPostModal = ({ onClose, onSubmit }) => {
               </label>
               
               {formData.content_images.length === 0 ? (
-                <div className="border-2 border-dashed border-base-300 rounded-lg p-6 text-center hover:border-primary transition-colors duration-200">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleContentImageChange}
-                    className="hidden"
-                    id="content-images-upload"
-                  />
-                  <label
-                    htmlFor="content-images-upload"
-                    className="cursor-pointer flex flex-col items-center gap-2"
-                  >
-                    <svg className="w-12 h-12 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <div className="text-base-content/60">
-                      <span className="font-medium text-primary">Click to upload</span> or drag and drop
-                    </div>
-                    <div className="text-sm text-base-content/40">
-                      PNG, JPG, GIF up to 5MB each (Max 4 images)
-                    </div>
-                  </label>
+                <div className="space-y-4">
+                  {/* Upload Area */}
+                  <div className="border-2 border-dashed border-base-300 rounded-lg p-6 text-center hover:border-primary transition-colors duration-200">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleContentImageChange}
+                      className="hidden"
+                      id="content-images-upload"
+                    />
+                    <label
+                      htmlFor="content-images-upload"
+                      className="cursor-pointer flex flex-col items-center gap-2"
+                    >
+                      <svg className="w-12 h-12 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      <div className="text-base-content/60">
+                        <span className="font-medium text-primary">Click to upload</span> or drag and drop
+                      </div>
+                      <div className="text-sm text-base-content/40">
+                        PNG, JPG, GIF up to 5MB each (Max 4 images)
+                      </div>
+                    </label>
+                  </div>
+                  
+                  {/* Recent Uploads Button */}
+                  <div className="text-center">
+                    <div className="text-sm text-base-content/60 mb-2">or</div>
+                    <button
+                      type="button"
+                      onClick={() => setShowRecentUploads(true)}
+                      className="btn btn-outline btn-sm gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Browse Recent Uploads
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -359,26 +401,41 @@ const AddPostModal = ({ onClose, onSubmit }) => {
                   </div>
                   
                   {formData.content_images.length < 4 && (
-                    <div className="border-2 border-dashed border-base-300 rounded-lg p-4 text-center hover:border-primary transition-colors duration-200">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleContentImageChange}
-                        className="hidden"
-                        id="add-more-content-images"
-                      />
-                      <label
-                        htmlFor="add-more-content-images"
-                        className="cursor-pointer flex flex-col items-center gap-2"
-                      >
-                        <svg className="w-8 h-8 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        <div className="text-sm text-base-content/60">
-                          Add more images ({formData.content_images.length}/4)
-                        </div>
-                      </label>
+                    <div className="space-y-3">
+                      <div className="border-2 border-dashed border-base-300 rounded-lg p-4 text-center hover:border-primary transition-colors duration-200">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleContentImageChange}
+                          className="hidden"
+                          id="add-more-content-images"
+                        />
+                        <label
+                          htmlFor="add-more-content-images"
+                          className="cursor-pointer flex flex-col items-center gap-2"
+                        >
+                          <svg className="w-8 h-8 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                          <div className="text-sm text-base-content/60">
+                            Add more images ({formData.content_images.length}/4)
+                          </div>
+                        </label>
+                      </div>
+                      
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={() => setShowRecentUploads(true)}
+                          className="btn btn-outline btn-xs gap-2"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Browse Recent Uploads
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -568,6 +625,14 @@ const AddPostModal = ({ onClose, onSubmit }) => {
           </form>
         </div>
       </div>
+      
+      {/* Recent Uploads Modal */}
+      {showRecentUploads && (
+        <RecentUploadsModal
+          onClose={() => setShowRecentUploads(false)}
+          onSelectImage={handleRecentImageSelect}
+        />
+      )}
     </div>
   )
 }
