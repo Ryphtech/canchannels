@@ -125,6 +125,17 @@ const Header = () => {
     </svg>
   </button>
 
+  {/* Notification Bell */}
+  <button className="btn btn-ghost btn-circle relative" aria-label="Notifications">
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15 17h5l-5 5v-5zM11 19H6a2 2 0 01-2-2V6a2 2 0 012-2h5m5 0v5m0-5h5m-5 0l-5 5"
+      />
+    </svg>
+  </button>
+
   {/* Theme Toggle Button */}
   <button
     onClick={toggleTheme}

@@ -6,12 +6,15 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
     subtitle: '',
     category: '',
     keywords: '',
-    content: '',
+    content_top: '',
+    content_down: '',
+    content_images: [],
     featured: false,
     image: null,
     links: []
   })
   const [imagePreview, setImagePreview] = useState(null)
+  const [contentImagePreviews, setContentImagePreviews] = useState([])
   const [currentLink, setCurrentLink] = useState({ url: '', title: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -23,7 +26,9 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
         subtitle: post.subtitle || '',
         category: post.category || '',
         keywords: post.keywords || '',
-        content: post.content || '',
+        content_top: post.content_top || '',
+        content_down: post.content_down || '',
+        content_images: post.content_images || [],
         featured: post.featured || false,
         image: null, // We don't pre-populate the file input
         links: Array.isArray(post.links) ? post.links : []
@@ -31,6 +36,14 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
       // Set image preview if post has an image
       if (post.image) {
         setImagePreview(post.image)
+      }
+      // Set content image previews
+      if (post.content_images && Array.isArray(post.content_images)) {
+        setContentImagePreviews(post.content_images.map((url, index) => ({
+          id: index,
+          preview: url,
+          file: null
+        })))
       }
     }
   }, [post])
@@ -51,12 +64,15 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
         subtitle: '',
         category: '',
         keywords: '',
-        content: '',
+        content_top: '',
+        content_down: '',
+        content_images: [],
         featured: false,
         image: null,
         links: []
       })
       setImagePreview(null)
+      setContentImagePreviews([])
       setCurrentLink({ url: '', title: '' })
     } catch (error) {
       console.error('Error submitting form:', error)
@@ -111,6 +127,56 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
     // Reset file input
     const fileInput = document.querySelector('input[type="file"]')
     if (fileInput) fileInput.value = ''
+  }
+
+  const handleContentImageChange = (e) => {
+    const files = Array.from(e.target.files)
+    
+    // Check if adding these files would exceed the 4 image limit
+    if (formData.content_images.length + files.length > 4) {
+      alert('You can only upload a maximum of 4 images for content')
+      return
+    }
+
+    files.forEach(file => {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select valid image files')
+        return
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB')
+        return
+      }
+
+      // Create preview URL
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const newImage = {
+          id: Date.now() + Math.random(),
+          file: file,
+          preview: e.target.result
+        }
+        
+        setFormData(prev => ({
+          ...prev,
+          content_images: [...prev.content_images, newImage]
+        }))
+        
+        setContentImagePreviews(prev => [...prev, newImage])
+      }
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const removeContentImage = (imageId) => {
+    setFormData(prev => ({
+      ...prev,
+      content_images: prev.content_images.filter(img => img.id !== imageId)
+    }))
+    setContentImagePreviews(prev => prev.filter(img => img.id !== imageId))
   }
 
   const handleLinkChange = (e) => {
@@ -247,18 +313,123 @@ const EditPostModal = ({ onClose, onSubmit, post }) => {
               </div>
             </div>
 
-            {/* Content */}
+            {/* Content Top */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium">Content</span>
+                <span className="label-text font-medium">Content Top</span>
               </label>
               <textarea
-                name="content"
-                value={formData.content}
+                name="content_top"
+                value={formData.content_top}
                 onChange={handleInputChange}
-                placeholder="Enter post content (optional)"
+                placeholder="Enter the first part of your content (appears before images)"
                 className="textarea textarea-bordered w-full h-32 resize-none"
               />
+              <div className="text-sm text-base-content/60 mt-1">
+                This content will appear before the image carousel
+              </div>
+            </div>
+
+            {/* Content Images */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Content Images (Max 4)</span>
+              </label>
+              
+              {contentImagePreviews.length === 0 ? (
+                <div className="border-2 border-dashed border-base-300 rounded-lg p-6 text-center hover:border-primary transition-colors duration-200">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleContentImageChange}
+                    className="hidden"
+                    id="content-images-upload-edit"
+                  />
+                  <label
+                    htmlFor="content-images-upload-edit"
+                    className="cursor-pointer flex flex-col items-center gap-2"
+                  >
+                    <svg className="w-12 h-12 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <div className="text-base-content/60">
+                      <span className="font-medium text-primary">Click to upload</span> or drag and drop
+                    </div>
+                    <div className="text-sm text-base-content/40">
+                      PNG, JPG, GIF up to 5MB each (Max 4 images)
+                    </div>
+                  </label>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {contentImagePreviews.map((image, index) => (
+                      <div key={image.id} className="relative">
+                        <img
+                          src={image.preview}
+                          alt={`Content image ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-lg border border-base-300"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeContentImage(image.id)}
+                          className="absolute top-2 right-2 btn btn-sm btn-circle btn-error shadow-lg"
+                          title="Remove image"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                        <div className="mt-1 text-xs text-base-content/60 text-center">
+                          Image {index + 1}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {contentImagePreviews.length < 4 && (
+                    <div className="border-2 border-dashed border-base-300 rounded-lg p-4 text-center hover:border-primary transition-colors duration-200">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleContentImageChange}
+                        className="hidden"
+                        id="add-more-content-images-edit"
+                      />
+                      <label
+                        htmlFor="add-more-content-images-edit"
+                        className="cursor-pointer flex flex-col items-center gap-2"
+                      >
+                        <svg className="w-8 h-8 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        <div className="text-sm text-base-content/60">
+                          Add more images ({contentImagePreviews.length}/4)
+                        </div>
+                      </label>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Content Down */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Content Down</span>
+              </label>
+              <textarea
+                name="content_down"
+                value={formData.content_down}
+                onChange={handleInputChange}
+                placeholder="Enter the second part of your content (appears after images)"
+                className="textarea textarea-bordered w-full h-32 resize-none"
+              />
+              <div className="text-sm text-base-content/60 mt-1">
+                This content will appear after the image carousel
+              </div>
             </div>
 
             {/* Image Upload */}

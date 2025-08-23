@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { postsService } from '../../../backend/postsService';
+import ContentImageCarousel from '../../../components/User/ContentImageCarousel/ContentImageCarousel';
 
 const Content = () => {
   const { postId } = useParams();
@@ -11,11 +12,11 @@ const Content = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Helper function to convert YouTube URLs to embed URLs
-  const getYouTubeEmbedUrl = (url) => {
+  // Helper function to extract YouTube video ID from URL
+  const getYouTubeVideoId = (url) => {
     if (!url) return '';
     
-    console.log('Processing URL for YouTube embed:', url); // Debug log
+    console.log('Processing URL for YouTube video ID:', url); // Debug log
     
     // Handle different YouTube URL formats
     let videoId = '';
@@ -48,7 +49,13 @@ const Content = () => {
     }
     
     console.log('Extracted video ID:', videoId); // Debug log
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+    return videoId;
+  };
+
+  // Helper function to get YouTube thumbnail URL
+  const getYouTubeThumbnailUrl = (videoId, quality = 'maxresdefault') => {
+    if (!videoId) return '';
+    return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
   };
 
   // Fetch posts from Supabase
@@ -203,20 +210,50 @@ const Content = () => {
             <span className="font-medium border px-2 py-1 rounded">{mainPost.category}</span>
           </div>
           
-                     {/* Display full content if available, otherwise show description */}
-           {postId && mainPost.content ? (
-             <div className="mb-4 text-justify leading-relaxed break-words overflow-wrap-anywhere">
-               {mainPost.content.split('\n').map((paragraph, index) => (
-                 <p key={index} className="mb-4 last:mb-0">
-                   {paragraph}
-                 </p>
-               ))}
-             </div>
-           ) : (
-             <p className=" mb-4 text-justify leading-relaxed break-words overflow-wrap-anywhere">
-               {mainPost.description}
-             </p>
-           )}
+          {/* Display split content with carousel */}
+          {postId && (mainPost.content_top || mainPost.content_down || (mainPost.content_images && mainPost.content_images.length > 0)) ? (
+            <div className="mb-4 text-justify leading-relaxed break-words overflow-wrap-anywhere">
+              {/* Content Top */}
+              {mainPost.content_top && (
+                <div className="mb-6">
+                  {mainPost.content_top.split('\n').map((paragraph, index) => (
+                    <p key={index} className="mb-4 last:mb-0">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              )}
+
+              {/* Content Images Carousel */}
+              <ContentImageCarousel images={mainPost.content_images} />
+
+              {/* Content Down */}
+              {mainPost.content_down && (
+                <div className="mt-6">
+                  {mainPost.content_down.split('\n').map((paragraph, index) => (
+                    <p key={index} className="mb-4 last:mb-0">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Fallback to old content or description */
+            <div className="mb-4 text-justify leading-relaxed break-words overflow-wrap-anywhere">
+              {mainPost.content ? (
+                mainPost.content.split('\n').map((paragraph, index) => (
+                  <p key={index} className="mb-4 last:mb-0">
+                    {paragraph}
+                  </p>
+                ))
+              ) : (
+                <p className="mb-4">
+                  {mainPost.description}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Display attached links if any */}
           {mainPost.links && mainPost.links.length > 0 && (
@@ -277,42 +314,59 @@ const Content = () => {
             console.log('Final YouTube link found:', youtubeLink);
             console.log('=== END YOUTUBE DETECTION ===');
             
-            return youtubeLink ? (
-              <div className="p-4 rounded-lg shadow">
-                <h3 className="font-semibold text-lg mb-2">Watch Now</h3>
-                <div className="aspect-w-16 aspect-h-9">
-                  <iframe
-                    src={getYouTubeEmbedUrl(youtubeLink.url)}
-                    title="YouTube Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-48 rounded"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="p-4 rounded-lg shadow">
-                <h3 className="font-semibold text-lg mb-2">Watch Now</h3>
-                <div className="flex items-center justify-center h-48 bg-gray-200 dark:bg-gray-700 rounded">
-                  <div className="text-center text-gray-500 dark:text-gray-400">
-                    <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p className="text-sm">No video available</p>
-                  </div>
-                </div>
-              </div>
-            );
+                         return youtubeLink ? (() => {
+               const videoId = getYouTubeVideoId(youtubeLink.url);
+               const thumbnailUrl = getYouTubeThumbnailUrl(videoId);
+               
+               return (
+                 <div className="p-4 rounded-lg shadow">
+                   <h3 className="font-semibold text-lg mb-2">Watch Now</h3>
+                   <div 
+                     className="aspect-w-16 aspect-h-9 relative cursor-pointer group"
+                     onClick={() => window.open(youtubeLink.url, '_blank', 'noopener,noreferrer')}
+                     title="Click to watch on YouTube"
+                   >
+                     {/* YouTube Thumbnail */}
+                     <img
+                       src={thumbnailUrl}
+                       alt="YouTube Video Thumbnail"
+                       className="w-full h-48 object-cover rounded"
+                       onError={(e) => {
+                         // Fallback to medium quality if maxresdefault fails
+                         const fallbackUrl = getYouTubeThumbnailUrl(videoId, 'hqdefault');
+                         if (e.target.src !== fallbackUrl) {
+                           e.target.src = fallbackUrl;
+                         }
+                       }}
+                     />
+                     
+                     {/* Play Button Overlay */}
+                     <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
+                       <div className="bg-red-600 text-white p-3 rounded-full group-hover:scale-110 transition-transform duration-200">
+                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                           <path d="M8 5v14l11-7z"/>
+                         </svg>
+                       </div>
+                     </div>
+                     
+                     {/* YouTube Logo */}
+                     <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
+                       YouTube
+                     </div>
+                   </div>
+                 </div>
+               );
+             })() : null;
           })()}
 
                  {/* Recommendations */}
-         <div className="p-4 rounded-lg shadow">
-           <h3 className="font-semibold text-lg mb-4">
-             {postId && currentPost?.keywords ? 'Related Posts' : 'Recommendations'}
-           </h3>
-           <div className="space-y-4">
-             {recommendedPosts.length > 0 ? (
-               recommendedPosts.map((post, index) => (
+         {recommendedPosts.length > 0 && (
+           <div className="p-4 rounded-lg shadow">
+             <h3 className="font-semibold text-lg mb-4">
+               {postId && currentPost?.keywords ? 'Related Posts' : 'Recommendations'}
+             </h3>
+             <div className="space-y-4">
+               {recommendedPosts.map((post, index) => (
                  <div 
                    key={post.id || index} 
                    className="flex gap-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 p-2 rounded transition-colors duration-200"
@@ -339,12 +393,10 @@ const Content = () => {
                      )}
                    </div>
                  </div>
-               ))
-             ) : (
-               <p className="text-sm text-gray-500">No recommendations available</p>
-             )}
+               ))}
+             </div>
            </div>
-         </div>
+         )}
       </div>
     </div>
   );

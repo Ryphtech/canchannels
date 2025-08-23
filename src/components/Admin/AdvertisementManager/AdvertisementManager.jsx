@@ -56,7 +56,13 @@ const AdvertisementManager = () => {
   const handleDeleteAdvertisement = async (id) => {
     if (window.confirm('Are you sure you want to delete this advertisement?')) {
       try {
-        await advertisementsService.deleteAdvertisement(id);
+        // Find the advertisement to get its image URL
+        const advertisement = advertisements.find(ad => ad.id === id);
+        if (advertisement) {
+          await advertisementsService.deleteAdvertisement(id, advertisement);
+        } else {
+          await advertisementsService.deleteAdvertisement(id);
+        }
         await fetchAdvertisements();
         alert('Advertisement deleted successfully!');
       } catch (error) {

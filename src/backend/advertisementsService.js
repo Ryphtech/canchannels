@@ -85,8 +85,9 @@ export const advertisementsService = {
   },
 
   // Delete advertisement
-  async deleteAdvertisement(id) {
+  async deleteAdvertisement(id, advertisementData = null) {
     try {
+      // Delete the advertisement from database
       const { error } = await supabase
         .from('advertisements')
         .delete()
@@ -95,6 +96,31 @@ export const advertisementsService = {
       if (error) {
         console.error('Error deleting advertisement:', error);
         throw error;
+      }
+
+      // If advertisement data is provided and it has an image, delete it from storage
+      if (advertisementData && advertisementData.image_url && advertisementData.image_url.includes('advertisement-images')) {
+        try {
+          // Extract filename from the image URL
+          const imageUrl = new URL(advertisementData.image_url);
+          const pathParts = imageUrl.pathname.split('/');
+          const fileName = pathParts[pathParts.length - 1];
+          
+          // Delete the image from storage
+          const { error: storageError } = await supabase.storage
+            .from('advertisement-images')
+            .remove([fileName]);
+
+          if (storageError) {
+            console.warn("Warning: Failed to delete advertisement image from storage:", storageError);
+            // Don't fail the entire operation if image deletion fails
+          } else {
+            console.log("Advertisement image deleted from storage successfully");
+          }
+        } catch (storageError) {
+          console.warn("Warning: Error deleting advertisement image from storage:", storageError);
+          // Don't fail the entire operation if image deletion fails
+        }
       }
 
       return true;

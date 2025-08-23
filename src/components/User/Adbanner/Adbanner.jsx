@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAdvertisements } from '../../../hooks/useAdvertisements';
 
-const AdBanner = ({ position = 'homepage-top', fallbackImage = 'https://www.svgrepo.com/show/508699/landscape-placeholder.svg', fallbackLink = 'https://example.com' }) => {
+const AdBanner = ({ position = 'homepage-top', fallbackImage = '', fallbackLink = '' }) => {
   const { advertisements, loading, error } = useAdvertisements(position);
 
   // If loading or error, show fallback
