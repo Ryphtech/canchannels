@@ -2,6 +2,7 @@ import React from 'react'
 import Hero from '../../../sections/User/Hero/Hero'
 import AdBanner from '../../../components/User/Adbanner/Adbanner'
 import CanPosts from '../../../sections/User/CanPosts/CanPosts';
+import CanExclusive from '../../../sections/User/CanExclusive/CanExclusive';
 import Showcase from '../../../sections/User/Showcase/Showcase';
 import NewsCinemaSection from '../../../sections/User/NewsCinemaSection/NewsCinemaSection';
 
@@ -34,6 +35,7 @@ const Homepage = () => {
 
         <AdBanner position="homepage-top" />
         <Hero/>
+        <CanExclusive/>
         <CanPosts/>
         <NewsCinemaSection/>
         <Showcase/>
