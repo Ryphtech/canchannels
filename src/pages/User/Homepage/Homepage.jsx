@@ -3,6 +3,7 @@ import Hero from '../../../sections/User/Hero/Hero'
 import AdBanner from '../../../components/User/Adbanner/Adbanner'
 import CanPosts from '../../../sections/User/CanPosts/CanPosts';
 import Showcase from '../../../sections/User/Showcase/Showcase';
+import NewsCinemaSection from '../../../sections/User/NewsCinemaSection/NewsCinemaSection';
 
 const Homepage = () => {
   return (
@@ -34,6 +35,7 @@ const Homepage = () => {
         <AdBanner position="homepage-top" />
         <Hero/>
         <CanPosts/>
+        <NewsCinemaSection/>
         <Showcase/>
     </div>
   )
