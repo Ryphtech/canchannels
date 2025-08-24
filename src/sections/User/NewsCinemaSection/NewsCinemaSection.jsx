@@ -1,68 +1,21 @@
 import React, { useState, useEffect } from "react";
 import CanPostCard from "../../../components/User/CanPostCard/CanPostCard";
-import AdBanner from "../../../components/User/Adbanner/Adbanner";
 import { postsService } from "../../../backend/postsService";
 
 const NewsCinemaSection = () => {
-  const [newsPosts, setNewsPosts] = useState([]);
-  const [cinemaPosts, setCinemaPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [newsShowMore, setNewsShowMore] = useState(false);
-  const [cinemaShowMore, setCinemaShowMore] = useState(false);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [newsShowAll, setNewsShowAll] = useState(false);
+  const [cinemaShowAll, setCinemaShowAll] = useState(false);
 
-  // Helper function to intersperse posts with ads based on screen size
-  const interspersePostsWithAds = (posts, isLarge) => {
-    if (posts.length === 0) return [];
-    
-    const adPosition = isLarge ? 4 : 3; // 4 for large screens, 3 for small screens
-    const result = [];
-    posts.forEach((post, index) => {
-      result.push(post);
-      // Add ad after every 'adPosition' number of posts
-      if ((index + 1) % adPosition === 0 && index < posts.length - 1) {
-        result.push({ type: 'ad', id: `ad-${index}` });
-      }
-    });
-    return result;
-  };
-
-  // Helper function to get limited posts with ads
-  const getLimitedPostsWithAds = (posts, showMore, limit = 4) => {
-    const limitedPosts = showMore ? posts : posts.slice(0, limit);
-    return interspersePostsWithAds(limitedPosts, isLargeScreen);
-  };
-
-  // Check screen size on mount and resize
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 768); // md breakpoint
-    };
-    
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
-  // Fetch posts and separate by category
+  // Fetch posts from Supabase
   const fetchPosts = async () => {
     try {
       setLoading(true);
       setError(null);
       const fetchedPosts = await postsService.fetchPosts();
-      
-      // Separate posts by category
-      const news = fetchedPosts.filter(post => 
-        post.category && post.category.toLowerCase().includes('news')
-      );
-      const cinema = fetchedPosts.filter(post => 
-        post.category && post.category.toLowerCase().includes('cinema')
-      );
-      
-      setNewsPosts(news);
-      setCinemaPosts(cinema);
+      setPosts(fetchedPosts);
     } catch (err) {
       console.error('Error fetching posts:', err);
       setError('Failed to load posts. Please try again later.');
@@ -75,158 +28,154 @@ const NewsCinemaSection = () => {
     fetchPosts();
   }, []);
 
-  // Create limited mixed content arrays with ads
-  const newsWithAds = getLimitedPostsWithAds(newsPosts, newsShowMore, 4);
-  const cinemaWithAds = getLimitedPostsWithAds(cinemaPosts, cinemaShowMore, 4);
+  // Filter news and cinema posts separately
+  const newsPosts = posts.filter(post =>
+    post.category && post.category.toLowerCase().includes('news')
+  );
+  const cinemaPosts = posts.filter(post =>
+    post.category && post.category.toLowerCase().includes('cinema')
+  );
 
-  // Render mixed content (posts and ads) with grid layout
-  const renderMixedContent = (mixedContent, columnType, showMore, totalPosts, onShowMore) => {
-    if (mixedContent.length === 0) {
-      return (
-        <div className="text-center py-8">
-          <div className="text-gray-400 text-4xl mb-4">
-            {columnType === 'news' ? '📰' : '🎬'}
-          </div>
-          <p className="text-gray-500 dark:text-gray-400">
-            No {columnType} posts available at the moment.
-          </p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {mixedContent.map((item, index) => {
-            if (item.type === 'ad') {
-              return (
-                <div key={item.id} className="col-span-full my-4">
-                  <AdBanner 
-                    position={`${columnType}-column-${item.id}`}
-                    fallbackImage="https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
-                    fallbackLink="https://example.com"
-                  />
-                </div>
-              );
-            }
-            
-            return (
-              <CanPostCard
-                key={item.id || index}
-                id={item.id}
-                image={item.image}
-                title={item.title}
-                description={item.description}
-                link={item.link}
-                publishedOn={item.publishedOn}
-                category={item.category}
-                links={item.links}
-              />
-            );
-          })}
-        </div>
-        
-        {/* Show More Button */}
-        {totalPosts > 4 && (
-          <div className="text-center pt-4">
-            <button
-              onClick={onShowMore}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200 font-medium"
-            >
-              {showMore ? 'Show Less' : `Show More (${totalPosts - 4} more)`}
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
+  // Show only first 6 posts initially for each section
+  const displayedNewsPosts = newsShowAll ? newsPosts : newsPosts.slice(0, 6);
+  const displayedCinemaPosts = cinemaShowAll ? cinemaPosts : cinemaPosts.slice(0, 6);
 
   return (
-    <section className="py-8 px-4">
+    <section className="py-8 px-4 bg-base-100 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8 text-left">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Can News & Cinema
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Stay updated with the latest news and cinema releases
-          </p>
-        </div>
-
-        {/* Loading state */}
-        {loading && (
+        {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="text-gray-600 dark:text-gray-400">Loading posts...</span>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="text-base-content/70">Loading news and cinema content...</span>
             </div>
           </div>
-        )}
-
-        {/* Error state */}
-        {error && !loading && (
+        ) : error ? (
           <div className="text-center py-12">
-            <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Error Loading Posts</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
+            <div className="text-error text-6xl mb-4">⚠️</div>
+            <h3 className="text-xl font-semibold text-base-content mb-2">Error Loading Content</h3>
+            <p className="text-base-content/70 mb-6">{error}</p>
             <button
               onClick={fetchPosts}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn btn-primary"
             >
               Try Again
             </button>
           </div>
-        )}
+        ) : (
+          <>
+            {/* Can News Section */}
+            <div className="mb-16">
+              <div className="mb-8 text-center">
+                <h1 className="text-3xl md:text-4xl font-bold text-base-content mb-4">
+                  📰 Can News
+                </h1>
+                <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
+                  Stay updated with the latest breaking news and current events from around the world
+                </p>
+              </div>
 
-        {/* Two Column Layout */}
-        {!loading && !error && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* News Column */}
-            <div className="rounded-lg shadow-lg p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold flex items-center gap-2">
-                  <span className="text-blue-600">📰</span>
-                  Can News
-                </h3>
-                <span className="text-sm bg-blue-500 px-3 py-1 rounded-full">
-                  {newsPosts.length} posts
-                </span>
-              </div>
-              
-              <div className="pr-2">
-                {renderMixedContent(
-                  newsWithAds, 
-                  'news', 
-                  newsShowMore, 
-                  newsPosts.length, 
-                  () => setNewsShowMore(!newsShowMore)
-                )}
-              </div>
+              {newsPosts.length > 0 ? (
+                <>
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    {displayedNewsPosts.map((post, index) => (
+                      <div key={post.id || index} className="transform hover:scale-105 transition-transform duration-300">
+                        <CanPostCard
+                          id={post.id}
+                          image={post.image}
+                          title={post.title}
+                          description={post.description}
+                          link={post.link}
+                          publishedOn={post.publishedOn}
+                          category={post.category}
+                          links={post.links}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Show More Button for News */}
+                  {newsPosts.length > 6 && (
+                    <div className="text-center mt-8">
+                      <button
+                        onClick={() => setNewsShowAll(!newsShowAll)}
+                        className="btn btn-primary btn-lg transform hover:scale-105 transition-all duration-300"
+                      >
+                        {newsShowAll ? 'Show Less' : `Show More (${newsPosts.length - 6} more)`}
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-primary text-6xl mb-4">📰</div>
+                  <h3 className="text-xl font-semibold text-base-content mb-2">No News Content Yet</h3>
+                  <p className="text-base-content/70 mb-4">
+                    We're working on bringing you the latest news updates.
+                  </p>
+                  <p className="text-sm text-base-content/50">
+                    Check back soon for breaking news and current events!
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* Cinema Column */}
-            <div className="rounded-lg shadow-lg p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold flex items-center gap-2">
-                  <span className="text-purple-600">🎬</span>
-                  Can Cinema
-                </h3>
-                <span className="text-sm bg-blue-500 px-3 py-1 rounded-full">
-                  {cinemaPosts.length} posts
-                </span>
+            {/* Can Cinema Section */}
+            <div>
+              <div className="mb-8 text-center">
+                <h1 className="text-3xl md:text-4xl font-bold text-base-content mb-4">
+                  🎬 Can Cinema
+                </h1>
+                <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
+                  Discover the latest cinema releases, movie reviews, and entertainment news
+                </p>
               </div>
-              
-              <div className="pr-2">
-                {renderMixedContent(
-                  cinemaWithAds, 
-                  'cinema', 
-                  cinemaShowMore, 
-                  cinemaPosts.length, 
-                  () => setCinemaShowMore(!cinemaShowMore)
-                )}
-              </div>
+
+              {cinemaPosts.length > 0 ? (
+                <>
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    {displayedCinemaPosts.map((post, index) => (
+                      <div key={post.id || index} className="transform hover:scale-105 transition-transform duration-300">
+                        <CanPostCard
+                          id={post.id}
+                          image={post.image}
+                          title={post.title}
+                          description={post.description}
+                          link={post.link}
+                          publishedOn={post.publishedOn}
+                          category={post.category}
+                          links={post.links}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Show More Button for Cinema */}
+                  {cinemaPosts.length > 6 && (
+                    <div className="text-center mt-8">
+                      <button
+                        onClick={() => setCinemaShowAll(!cinemaShowAll)}
+                        className="btn btn-primary btn-lg transform hover:scale-105 transition-all duration-300"
+                      >
+                        {cinemaShowAll ? 'Show Less' : `Show More (${cinemaPosts.length - 6} more)`}
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-primary text-6xl mb-4">🎬</div>
+                  <h3 className="text-xl font-semibold text-base-content mb-2">No Cinema Content Yet</h3>
+                  <p className="text-base-content/70 mb-4">
+                    We're working on bringing you the latest cinema updates.
+                  </p>
+                  <p className="text-sm text-base-content/50">
+                    Check back soon for movie reviews and entertainment news!
+                  </p>
+                </div>
+              )}
             </div>
-          </div>
+          </>
         )}
       </div>
     </section>

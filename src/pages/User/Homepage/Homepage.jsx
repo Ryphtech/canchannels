@@ -36,9 +36,9 @@ const Homepage = () => {
         <AdBanner position="homepage-top" />
         <Hero/>
         <CanExclusive/>
-        <CanPosts/>
         <NewsCinemaSection/>
         <Showcase/>
+        <CanPosts/>
     </div>
   )
 }
