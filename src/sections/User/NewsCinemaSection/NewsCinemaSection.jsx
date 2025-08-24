@@ -8,11 +8,15 @@ const NewsCinemaSection = () => {
   const [cinemaPosts, setCinemaPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [newsShowMore, setNewsShowMore] = useState(false);
+  const [cinemaShowMore, setCinemaShowMore] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
 
-  // Helper function to intersperse posts with ads
-  const interspersePostsWithAds = (posts, adPosition = 3) => {
+  // Helper function to intersperse posts with ads based on screen size
+  const interspersePostsWithAds = (posts, isLarge) => {
     if (posts.length === 0) return [];
     
+    const adPosition = isLarge ? 4 : 3; // 4 for large screens, 3 for small screens
     const result = [];
     posts.forEach((post, index) => {
       result.push(post);
@@ -23,6 +27,24 @@ const NewsCinemaSection = () => {
     });
     return result;
   };
+
+  // Helper function to get limited posts with ads
+  const getLimitedPostsWithAds = (posts, showMore, limit = 4) => {
+    const limitedPosts = showMore ? posts : posts.slice(0, limit);
+    return interspersePostsWithAds(limitedPosts, isLargeScreen);
+  };
+
+  // Check screen size on mount and resize
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 768); // md breakpoint
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Fetch posts and separate by category
   const fetchPosts = async () => {
@@ -53,12 +75,12 @@ const NewsCinemaSection = () => {
     fetchPosts();
   }, []);
 
-  // Create mixed content arrays with ads
-  const newsWithAds = interspersePostsWithAds(newsPosts, 3);
-  const cinemaWithAds = interspersePostsWithAds(cinemaPosts, 3);
+  // Create limited mixed content arrays with ads
+  const newsWithAds = getLimitedPostsWithAds(newsPosts, newsShowMore, 4);
+  const cinemaWithAds = getLimitedPostsWithAds(cinemaPosts, cinemaShowMore, 4);
 
-  // Render mixed content (posts and ads)
-  const renderMixedContent = (mixedContent, columnType) => {
+  // Render mixed content (posts and ads) with grid layout
+  const renderMixedContent = (mixedContent, columnType, showMore, totalPosts, onShowMore) => {
     if (mixedContent.length === 0) {
       return (
         <div className="text-center py-8">
@@ -74,33 +96,47 @@ const NewsCinemaSection = () => {
 
     return (
       <div className="space-y-4">
-        {mixedContent.map((item, index) => {
-          if (item.type === 'ad') {
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {mixedContent.map((item, index) => {
+            if (item.type === 'ad') {
+              return (
+                <div key={item.id} className="col-span-full my-4">
+                  <AdBanner 
+                    position={`${columnType}-column-${item.id}`}
+                    fallbackImage="https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
+                    fallbackLink="https://example.com"
+                  />
+                </div>
+              );
+            }
+            
             return (
-              <div key={item.id} className="my-4">
-                <AdBanner 
-                  position={`${columnType}-column-${item.id}`}
-                  fallbackImage="https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
-                  fallbackLink="https://example.com"
-                />
-              </div>
+              <CanPostCard
+                key={item.id || index}
+                id={item.id}
+                image={item.image}
+                title={item.title}
+                description={item.description}
+                link={item.link}
+                publishedOn={item.publishedOn}
+                category={item.category}
+                links={item.links}
+              />
             );
-          }
-          
-          return (
-            <CanPostCard
-              key={item.id || index}
-              id={item.id}
-              image={item.image}
-              title={item.title}
-              description={item.description}
-              link={item.link}
-              publishedOn={item.publishedOn}
-              category={item.category}
-              links={item.links}
-            />
-          );
-        })}
+          })}
+        </div>
+        
+        {/* Show More Button */}
+        {totalPosts > 4 && (
+          <div className="text-center pt-4">
+            <button
+              onClick={onShowMore}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200 font-medium"
+            >
+              {showMore ? 'Show Less' : `Show More (${totalPosts - 4} more)`}
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -157,8 +193,14 @@ const NewsCinemaSection = () => {
                 </span>
               </div>
               
-              <div className="max-h-[600px] overflow-y-auto scrollbar-hide pr-2">
-                {renderMixedContent(newsWithAds, 'news')}
+              <div className="pr-2">
+                {renderMixedContent(
+                  newsWithAds, 
+                  'news', 
+                  newsShowMore, 
+                  newsPosts.length, 
+                  () => setNewsShowMore(!newsShowMore)
+                )}
               </div>
             </div>
 
@@ -174,8 +216,14 @@ const NewsCinemaSection = () => {
                 </span>
               </div>
               
-              <div className="max-h-[600px] overflow-y-auto scrollbar-hide pr-2">
-                {renderMixedContent(cinemaWithAds, 'cinema')}
+              <div className="pr-2">
+                {renderMixedContent(
+                  cinemaWithAds, 
+                  'cinema', 
+                  cinemaShowMore, 
+                  cinemaPosts.length, 
+                  () => setCinemaShowMore(!cinemaShowMore)
+                )}
               </div>
             </div>
           </div>
